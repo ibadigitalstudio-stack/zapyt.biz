@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>zapyt.biz — запити на авто, нерухомість, роботу</title>
+  <meta name="description" content="zapyt.biz — платформа запитів: авто, нерухомість, благодійність, робота, знайомства. Platforma zapytań po ukraińsku i po polsku.">
+  <meta name="theme-color" content="#12a150">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2312a150'/%3E%3Cpath d='M10 10h12l-12 12h12' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <script>
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem('theme'); } catch (e) {}
+      if (!theme) theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-row">
+      <a class="logo" href="#/" aria-label="zapyt.biz">
+        <span class="logo-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 10h12l-12 12h12" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>zapyt<b>.biz</b></span>
+      </a>
+      <div class="header-actions" id="header-actions"></div>
+    </div>
+  </header>
+
+  <main class="container" id="app"></main>
+
+  <footer class="footer">
+    <div class="container footer-row" id="footer"></div>
+  </footer>
+
+  <div id="modal-root"></div>
+  <div id="toasts" aria-live="polite"></div>
+
+  <script src="/i18n.js"></script>
+  <script src="/pages.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
