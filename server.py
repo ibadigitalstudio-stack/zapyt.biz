@@ -22,7 +22,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_DIR = os.path.join(ROOT, "public")
-DATA_DIR = os.path.join(ROOT, "data")
+# На хостингу DATA_DIR вказує на постійний диск, щоб база й фото не зникали після оновлення сайту.
+DATA_DIR = os.environ.get("DATA_DIR") or os.path.join(ROOT, "data")
 UPLOAD_DIR = os.path.join(DATA_DIR, "uploads")
 DB_PATH = os.path.join(DATA_DIR, "zapyt.db")
 
