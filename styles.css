@@ -351,3 +351,9 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* На середній ширині кнопка створення стискається до «+», щоб шапка не обрізалась */
+@media (max-width: 820px) {
+  #create-btn { width: 40px; height: 40px; padding: 0; border-radius: 999px; }
+  #create-btn span { display: none; }
+}
