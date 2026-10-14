@@ -77,6 +77,7 @@
   }
 
   async function api(path, method, body) {
+    if (state.demo) return DemoApi.call(path, method, body);
     const res = await fetch('/api' + path, {
       method: method || 'GET',
       headers: body ? { 'Content-Type': 'application/json' } : (method && method !== 'GET' ? { 'Content-Type': 'application/json' } : {}),
@@ -110,6 +111,8 @@
 
   function renderChrome() {
     document.documentElement.lang = state.lang;
+    $('#demo-banner').hidden = !state.demo;
+    $('#demo-banner').textContent = t('demo.banner');
     const dark = document.documentElement.dataset.theme === 'dark';
     $('#header-actions').innerHTML = `
       <div class="lang" role="group" aria-label="${esc(t('nav.lang'))}">
@@ -830,6 +833,8 @@
   async function init() {
     const saved = store.get('lang');
     state.lang = saved === 'uk' || saved === 'pl' ? saved : ((navigator.language || '').toLowerCase().startsWith('pl') ? 'pl' : 'uk');
+    // На статичному хостингу (GitHub Pages) сервера немає — вмикаємо демо-режим із даними в браузері.
+    state.demo = /\.github\.io$/.test(location.hostname) || location.protocol === 'file:' || new URLSearchParams(location.search).has('demo');
     renderChrome();
     try {
       const [config, me] = await Promise.all([api('/config'), api('/me')]);

@@ -158,6 +158,7 @@ const I18N = {
     'err.tg_verify': 'Не вдалося підтвердити вхід через Telegram. Спробуйте ще раз.',
     'err.server': 'Сталася помилка. Спробуйте ще раз.',
 
+    'demo.banner': 'Демо-версія: вхід і SMS тестові, а запити зберігаються лише у вашому браузері.',
     'footer.privacy': 'Політика конфіденційності',
     'footer.terms': 'Правила користування',
     'footer.sitemap': 'Карта сайту',
@@ -380,6 +381,7 @@ const I18N = {
     'err.tg_verify': 'Nie udało się potwierdzić logowania przez Telegram. Spróbuj ponownie.',
     'err.server': 'Wystąpił błąd. Spróbuj ponownie.',
 
+    'demo.banner': 'Wersja demo: logowanie i SMS są testowe, a zapytania zapisują się tylko w Twojej przeglądarce.',
     'footer.privacy': 'Polityka prywatności',
     'footer.terms': 'Regulamin',
     'footer.sitemap': 'Mapa strony',
