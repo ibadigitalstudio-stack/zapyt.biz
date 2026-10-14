@@ -63,6 +63,9 @@ main.container { flex: 1; padding-top: 24px; padding-bottom: 56px; }
 .link:hover { text-decoration: underline; }
 .stack { display: grid; gap: 12px; }
 
+/* Смужка демо-режиму */
+.demo-banner { padding: 6px 16px; background: var(--green); color: var(--on-green); font-size: 13px; font-weight: 600; text-align: center; }
+
 /* Шапка */
 .header {
   position: sticky; top: 0; z-index: 20;
