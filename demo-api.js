@@ -94,7 +94,8 @@ const DemoApi = (function () {
   }
 
   const brief = (r) => ({ id: r.id, cat: r.cat, sub: r.sub, title: r.title, country: r.country, city: r.city, price: r.price,
-    currency: r.currency, attrs: r.attrs, photo: r.photos[0] || null, status: r.status, created_at: r.created_at });
+    currency: r.currency, attrs: r.attrs, photo: r.photos[0] || null, status: r.status, created_at: r.created_at,
+    excerpt: r.description.slice(0, 180) });
   const findRequest = (id) => db.requests.find((r) => r.id === Number(id)) || fail('not_found');
 
   function list(q) {
