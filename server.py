@@ -140,6 +140,20 @@ CREATE TABLE IF NOT EXISTS responses (
     created_at INTEGER NOT NULL,
     UNIQUE(request_id, user_id)
 );
+CREATE TABLE IF NOT EXISTS likes (
+    request_id INTEGER NOT NULL REFERENCES requests(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at INTEGER NOT NULL,
+    PRIMARY KEY (request_id, user_id)
+);
+CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY,
+    request_id INTEGER NOT NULL REFERENCES requests(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    text TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS comments_request ON comments(request_id, created_at);
 """
 
 
@@ -470,16 +484,25 @@ def api_list(h):
     sql_where = " AND ".join(where)
     total = h.db.execute("SELECT COUNT(*) FROM requests r WHERE " + sql_where, args).fetchone()[0]
     rows = h.db.execute(
-        "SELECT r.*, (SELECT COUNT(*) FROM responses s WHERE s.request_id = r.id) AS responses_count "
-        "FROM requests r WHERE %s ORDER BY %s, r.id DESC LIMIT ? OFFSET ?" % (sql_where, order),
-        args + [PAGE_SIZE, (page - 1) * PAGE_SIZE]).fetchall()
+        "SELECT r.*, (SELECT COUNT(*) FROM responses s WHERE s.request_id = r.id) AS responses_count, "
+        + SOCIAL_SQL + " FROM requests r WHERE %s ORDER BY %s, r.id DESC LIMIT ? OFFSET ?" % (sql_where, order),
+        [h.user["id"] if h.user else 0] + args + [PAGE_SIZE, (page - 1) * PAGE_SIZE]).fetchall()
     items = []
     for row in rows:
         item = request_json(row)
+        item.update(likes=row["likes_count"], comments=row["comments_count"], liked=bool(row["liked"]))
         if q.get("mine") == "1":
             item["responses_count"] = row["responses_count"]
         items.append(item)
     return {"items": items, "total": total, "page": page, "pages": max(1, -(-total // PAGE_SIZE))}
+
+
+# Лічильники лайків і коментарів та чи лайкнув запит поточний користувач (параметр — id користувача або 0).
+SOCIAL_SQL = (
+    "(SELECT COUNT(*) FROM likes l WHERE l.request_id = r.id) AS likes_count, "
+    "(SELECT COUNT(*) FROM comments c WHERE c.request_id = r.id) AS comments_count, "
+    "EXISTS(SELECT 1 FROM likes l2 WHERE l2.request_id = r.id AND l2.user_id = ?) AS liked"
+)
 
 
 def get_request(h, request_id):
@@ -507,6 +530,9 @@ def api_get(h, request_id):
     out["contact"] = author["username"] if h.user and h.user["phone_verified_at"] else None
     out["responses_count"] = h.db.execute(
         "SELECT COUNT(*) FROM responses WHERE request_id = ?", (row["id"],)).fetchone()[0]
+    social = h.db.execute("SELECT " + SOCIAL_SQL + " FROM requests r WHERE r.id = ?",
+                          (h.user["id"] if h.user else 0, row["id"])).fetchone()
+    out.update(likes=social["likes_count"], comments=social["comments_count"], liked=bool(social["liked"]))
     if owner:
         out["responses"] = [
             {"id": r["id"], "text": r["text"], "created_at": r["created_at"],
@@ -586,6 +612,77 @@ def api_delete(h, request_id):
     return {"ok": True}
 
 
+def active_request(h, request_id):
+    row = get_request(h, request_id)
+    if row["status"] != "active":
+        raise ApiError(404, "not_found")
+    return row
+
+
+def comments_count(h, request_id):
+    return h.db.execute("SELECT COUNT(*) FROM comments WHERE request_id = ?", (request_id,)).fetchone()[0]
+
+
+# Лайкати й коментувати можуть лише зареєстровані користувачі (Telegram + підтверджений номер).
+def api_like(h, request_id):
+    h.require_verified()
+    row = active_request(h, request_id)
+    try:
+        h.db.execute("INSERT INTO likes(request_id, user_id, created_at) VALUES (?,?,?)",
+                     (row["id"], h.user["id"], now()))
+        liked = True
+    except sqlite3.IntegrityError:
+        h.db.execute("DELETE FROM likes WHERE request_id = ? AND user_id = ?", (row["id"], h.user["id"]))
+        liked = False
+    h.db.commit()
+    likes = h.db.execute("SELECT COUNT(*) FROM likes WHERE request_id = ?", (row["id"],)).fetchone()[0]
+    return {"liked": liked, "likes": likes}
+
+
+def api_comments(h, request_id):
+    row = get_request(h, request_id)
+    if row["status"] != "active" and not can_manage(h, row):
+        raise ApiError(404, "not_found")
+    admin = bool(h.user) and h.user["username"].lower() in ADMINS
+    items = []
+    for c in h.db.execute(
+            "SELECT c.*, u.name, u.photo_url FROM comments c JOIN users u ON u.id = c.user_id "
+            "WHERE c.request_id = ? ORDER BY c.created_at ASC, c.id ASC LIMIT 300", (row["id"],)):
+        items.append({
+            "id": c["id"], "text": c["text"], "created_at": c["created_at"], "name": c["name"], "photo": c["photo_url"],
+            "is_author": c["user_id"] == row["user_id"],
+            # Видалити коментар може його автор, автор запиту або адміністратор.
+            "can_delete": bool(h.user) and (c["user_id"] == h.user["id"] or row["user_id"] == h.user["id"] or admin),
+        })
+    return {"items": items, "count": len(items)}
+
+
+def api_comment_create(h, request_id):
+    h.require_verified()
+    row = active_request(h, request_id)
+    text = clean_text(h.body.get("text"), 1, 500, "comment")
+    if has_phone(text):
+        raise ApiError(400, "phone")
+    rate_limit(h, "comments", 30)
+    h.db.execute("INSERT INTO comments(request_id, user_id, text, created_at) VALUES (?,?,?,?)",
+                 (row["id"], h.user["id"], text, now()))
+    h.db.commit()
+    return {"ok": True, "count": comments_count(h, row["id"])}
+
+
+def api_comment_delete(h, comment_id):
+    h.require_user()
+    c = h.db.execute("SELECT c.*, r.user_id AS owner_id FROM comments c JOIN requests r ON r.id = c.request_id "
+                     "WHERE c.id = ?", (int(comment_id),)).fetchone()
+    if not c:
+        raise ApiError(404, "not_found")
+    if h.user["id"] not in (c["user_id"], c["owner_id"]) and h.user["username"].lower() not in ADMINS:
+        raise ApiError(403, "forbidden")
+    h.db.execute("DELETE FROM comments WHERE id = ?", (c["id"],))
+    h.db.commit()
+    return {"ok": True, "count": comments_count(h, c["request_id"])}
+
+
 def api_respond(h, request_id):
     h.require_verified()
     row = get_request(h, request_id)
@@ -654,6 +751,10 @@ ROUTES = [
     ("POST", r"/api/requests/(\d+)/responses", api_respond),
     ("GET", r"/api/my/responses", api_my_responses),
     ("POST", r"/api/upload", api_upload),
+    ("POST", r"/api/requests/(\d+)/like", api_like),
+    ("GET", r"/api/requests/(\d+)/comments", api_comments),
+    ("POST", r"/api/requests/(\d+)/comments", api_comment_create),
+    ("DELETE", r"/api/comments/(\d+)", api_comment_delete),
 ]
 ROUTES = [(m, re.compile("^%s$" % p), fn) for m, p, fn in ROUTES]
 

@@ -52,6 +52,8 @@ const DemoApi = (function () {
     return seed();
   }
   let db = load();
+  db.likes = db.likes || [];
+  db.comments = db.comments || [];
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { fail('too_large'); }
   }
@@ -96,6 +98,12 @@ const DemoApi = (function () {
   const brief = (r) => ({ id: r.id, cat: r.cat, sub: r.sub, title: r.title, country: r.country, city: r.city, price: r.price,
     currency: r.currency, attrs: r.attrs, photo: r.photos[0] || null, status: r.status, created_at: r.created_at,
     excerpt: r.description.slice(0, 180) });
+  const social = (r) => {
+    const user = me();
+    return { likes: db.likes.filter((l) => l.request_id === r.id).length,
+      comments: db.comments.filter((c) => c.request_id === r.id).length,
+      liked: !!user && db.likes.some((l) => l.request_id === r.id && l.user_id === user.id) };
+  };
   const findRequest = (id) => db.requests.find((r) => r.id === Number(id)) || fail('not_found');
 
   function list(q) {
@@ -122,7 +130,7 @@ const DemoApi = (function () {
     const page = Math.max(1, parseInt(q.get('page'), 10) || 1);
     return {
       total: items.length, page, pages: Math.max(1, Math.ceil(items.length / PAGE_SIZE)),
-      items: items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((r) => Object.assign(brief(r),
+      items: items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((r) => Object.assign(brief(r), social(r),
         user && q.get('mine') === '1' ? { responses_count: db.responses.filter((s) => s.request_id === r.id).length } : {})),
     };
   }
@@ -134,7 +142,7 @@ const DemoApi = (function () {
     if (r.status !== 'active' && !owner) fail('not_found');
     const author = db.users.find((u) => u.id === r.user_id);
     const responses = db.responses.filter((s) => s.request_id === r.id);
-    const out = Object.assign(brief(r), {
+    const out = Object.assign(brief(r), social(r), {
       description: r.description, photos: r.photos, is_owner: owner, can_manage: owner,
       author: { name: author.name, photo: author.photo, since: author.created_at },
       contact: user && user.verified ? author.username : null, responses_count: responses.length,
@@ -218,9 +226,49 @@ const DemoApi = (function () {
       if (method === 'DELETE') {
         db.requests = db.requests.filter((x) => x.id !== r.id);
         db.responses = db.responses.filter((s) => s.request_id !== r.id);
+        db.likes = db.likes.filter((l) => l.request_id !== r.id);
+        db.comments = db.comments.filter((c) => c.request_id !== r.id);
         save();
         return { ok: true };
       }
+    }
+    if ((m = route.match(/^\/requests\/(\d+)\/like$/))) {
+      const user = requireVerified();
+      const r = findRequest(m[1]);
+      if (r.status !== 'active') fail('not_found');
+      const had = db.likes.some((l) => l.request_id === r.id && l.user_id === user.id);
+      if (had) db.likes = db.likes.filter((l) => !(l.request_id === r.id && l.user_id === user.id));
+      else db.likes.push({ request_id: r.id, user_id: user.id, created_at: now() });
+      save();
+      return { liked: !had, likes: social(r).likes };
+    }
+    if ((m = route.match(/^\/requests\/(\d+)\/comments$/))) {
+      const r = findRequest(m[1]);
+      const user = me();
+      if (method === 'GET') {
+        const items = db.comments.filter((c) => c.request_id === r.id).sort((a, b) => a.created_at - b.created_at).map((c) => {
+          const u = db.users.find((x) => x.id === c.user_id);
+          return { id: c.id, text: c.text, created_at: c.created_at, name: u.name, photo: u.photo, is_author: c.user_id === r.user_id,
+            can_delete: !!user && (c.user_id === user.id || r.user_id === user.id) };
+        });
+        return { items, count: items.length };
+      }
+      requireVerified();
+      if (r.status !== 'active') fail('not_found');
+      const value = text(body.text, 1, 500, 'comment');
+      if (PHONE_RE.test(value)) fail('phone');
+      db.comments.push({ id: db.nextId++, request_id: r.id, user_id: user.id, text: value, created_at: now() });
+      save();
+      return { ok: true, count: social(r).comments };
+    }
+    if ((m = route.match(/^\/comments\/(\d+)$/)) && method === 'DELETE') {
+      const user = requireUser();
+      const c = db.comments.find((x) => x.id === Number(m[1])) || fail('not_found');
+      const r = findRequest(c.request_id);
+      if (c.user_id !== user.id && r.user_id !== user.id) fail('forbidden');
+      db.comments = db.comments.filter((x) => x.id !== c.id);
+      save();
+      return { ok: true, count: social(r).comments };
     }
     if ((m = route.match(/^\/requests\/(\d+)\/status$/))) {
       const user = requireUser();

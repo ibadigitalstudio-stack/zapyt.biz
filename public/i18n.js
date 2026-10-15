@@ -1,6 +1,16 @@
 // Тексти інтерфейсу: українська та польська.
 const I18N = {
   uk: {
+    'like.label': 'Подобається',
+    'comments.title': 'Коментарі',
+    'comments.public': 'Коментарі бачать усі відвідувачі. Номери телефонів заборонені.',
+    'comments.empty': 'Коментарів поки немає. Будьте першим!',
+    'comments.placeholder': 'Напишіть коментар…',
+    'comments.send': 'Надіслати',
+    'comments.login': 'Увійдіть, щоб коментувати',
+    'comments.delete': 'Видалити коментар',
+    'comments.author': 'Автор',
+    'err.comment': 'Коментар має містити від 1 до 500 символів.',
     'view.feed': 'Стрічка',
     'feed.all': 'Усі',
     'feed.filters': 'Фільтри та формат',
@@ -243,6 +253,16 @@ const I18N = {
   },
 
   pl: {
+    'like.label': 'Lubię to',
+    'comments.title': 'Komentarze',
+    'comments.public': 'Komentarze widzą wszyscy odwiedzający. Numery telefonów są zabronione.',
+    'comments.empty': 'Nie ma jeszcze komentarzy. Bądź pierwszy!',
+    'comments.placeholder': 'Napisz komentarz…',
+    'comments.send': 'Wyślij',
+    'comments.login': 'Zaloguj się, aby komentować',
+    'comments.delete': 'Usuń komentarz',
+    'comments.author': 'Autor',
+    'err.comment': 'Komentarz musi mieć od 1 do 500 znaków.',
     'view.feed': 'Przewijanie',
     'feed.all': 'Wszystkie',
     'feed.filters': 'Filtry i widok',
