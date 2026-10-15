@@ -1,6 +1,13 @@
 // Тексти інтерфейсу: українська та польська.
 const I18N = {
   uk: {
+    'view.label': 'Формат відображення',
+    'view.grid': 'Плитка',
+    'view.list': 'Список',
+    'view.compact': 'Компактно',
+    'feed.hint': 'Гортайте вгору, щоб побачити наступний запит',
+    'feed.more': 'Детальніше',
+    'feed.back': 'Назад',
     'form.titlePlaceholder': 'Наприклад: Куплю Toyota RAV4 2018–2021',
     'price.upTo': 'до {amount}',
     'how.3d': 'Обирайте найкращу пропозицію і пишіть напряму — без дзвінків і номерів телефонів.',
@@ -233,6 +240,13 @@ const I18N = {
   },
 
   pl: {
+    'view.label': 'Sposób wyświetlania',
+    'view.grid': 'Kafelki',
+    'view.list': 'Lista',
+    'view.compact': 'Kompaktowo',
+    'feed.hint': 'Przesuń w górę, aby zobaczyć następne zapytanie',
+    'feed.more': 'Więcej',
+    'feed.back': 'Wstecz',
     'form.titlePlaceholder': 'Na przykład: Kupię Toyotę RAV4 2018–2021',
     'price.upTo': 'do {amount}',
     'how.3d': 'Wybierz najlepszą ofertę i napisz bezpośrednio — bez telefonów i numerów.',

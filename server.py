@@ -263,6 +263,7 @@ def request_json(row, full=False):
         "currency": row["currency"], "attrs": json.loads(row["attrs"]),
         "photo": photos[0] if photos else None, "status": row["status"],
         "created_at": row["created_at"],
+        "excerpt": row["description"][:180],
     }
     if full:
         out["description"] = row["description"]

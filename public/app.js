@@ -28,6 +28,11 @@
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     check: '<path d="m5 12.500 4.500 4.500L19 7.500"/>',
     shield: '<path d="M12 3.500 5 6v5.500c0 4.300 3 7.600 7 9 4-1.400 7-4.700 7-9V6l-7-2.500Z"/><path d="m9 12 2.200 2.200L15 10.400"/>',
+    grid: '<rect x="4" y="4" width="7" height="7" rx="1.500"/><rect x="13" y="4" width="7" height="7" rx="1.500"/><rect x="4" y="13" width="7" height="7" rx="1.500"/><rect x="13" y="13" width="7" height="7" rx="1.500"/>',
+    list: '<rect x="4" y="5" width="6" height="6" rx="1.500"/><rect x="4" y="13" width="6" height="6" rx="1.500"/><path d="M13 7h7M13 10h5M13 15h7M13 18h5"/>',
+    compact: '<path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>',
+    up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+    image: '<rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.500"/><path d="m20 16-5-5-8 8"/>',
     telegram: '<path d="M20.500 4.500 3.500 11l5 2 2 6 3-4 4.500 3.500 2.500-14Z"/><path d="m8.500 13 9-6.500"/>',
   };
   const icon = (name, cls) =>
@@ -377,6 +382,7 @@
     });
     try {
       const data = await api('/requests');
+      setFeedContext(data, {}, '#/');
       $('#latest').innerHTML = data.items.length
         ? `<div class="grid">${data.items.slice(0, 12).map((i) => card(i)).join('')}</div>`
         : empty(t('list.empty'), t('list.emptyHint'));
@@ -443,16 +449,246 @@
       const query = {};
       Object.keys(f).forEach((k) => { if (f[k]) query[k] = f[k]; });
       const data = await api('/requests?' + new URLSearchParams(query));
+      setFeedContext(data, query, location.hash);
+      const view = VIEWS.includes(store.get('catalogView')) ? store.get('catalogView') : 'grid';
       $('#results').innerHTML = data.items.length ? `
-        <p class="muted results-count">${esc(t('list.found', { n: data.total }))}</p>
-        <div class="grid">${data.items.map((i) => card(i)).join('')}</div>
+        <div class="results-bar">
+          <p class="muted results-count">${esc(t('list.found', { n: data.total }))}</p>
+          <div class="view-switch" role="group" aria-label="${esc(t('view.label'))}">
+            ${VIEWS.map((v) => `<button class="${v === view ? 'on' : ''}" data-view="${v}" title="${esc(t('view.' + v))}" aria-label="${esc(t('view.' + v))}" aria-pressed="${v === view}">${icon(v)}<span>${esc(t('view.' + v))}</span></button>`).join('')}
+          </div>
+        </div>
+        <div id="items">${renderItems(data.items, view)}</div>
         ${data.pages > 1 ? `
           <nav class="pager">
             ${data.page > 1 ? `<a class="btn btn-ghost" href="${listHash(Object.assign({}, f, { page: data.page - 1 }))}">← ${esc(t('list.prev'))}</a>` : '<span></span>'}
             <span class="muted">${esc(t('list.page', { page: data.page, pages: data.pages }))}</span>
             ${data.page < data.pages ? `<a class="btn btn-ghost" href="${listHash(Object.assign({}, f, { page: data.page + 1 }))}">${esc(t('list.next'))} →</a>` : '<span></span>'}
           </nav>` : ''}` : empty(t('list.empty'), t('list.emptyHint'));
+      $$('[data-view]').forEach((btn) => btn.addEventListener('click', () => {
+        store.set('catalogView', btn.dataset.view);
+        $('#items').innerHTML = renderItems(data.items, btn.dataset.view);
+        $$('[data-view]').forEach((b) => { b.classList.toggle('on', b === btn); b.setAttribute('aria-pressed', b === btn); });
+      }));
     } catch (err) { toastError(err); }
+  }
+
+  // ---------- Формати каталогу ----------
+
+  const VIEWS = ['grid', 'list', 'compact'];
+
+  function rowCard(item) {
+    const media = item.photo ? `<img src="${esc(item.photo)}" alt="" loading="lazy">` : `<div class="card-placeholder">${icon(item.cat)}</div>`;
+    return `
+      <a class="row-card ${item.status === 'closed' ? 'is-closed' : ''}" href="#/r/${item.id}">
+        <div class="row-media">${media}</div>
+        <div class="row-body">
+          <span class="row-sub">${esc(t('cat.' + item.cat))} · ${esc(t(`sub.${item.cat}.${item.sub}`))}</span>
+          <h3>${esc(item.title)}</h3>
+          ${item.excerpt ? `<p class="row-excerpt">${esc(item.excerpt)}</p>` : ''}
+          <div class="row-foot"><b class="card-price">${esc(priceLabel(item))}</b>
+            <span class="card-meta">${icon('pin')}<span>${esc(item.city)}</span><span class="dot">·</span><span>${esc(fmtRelative(item.created_at))}</span></span></div>
+        </div>
+      </a>`;
+  }
+
+  function lineCard(item) {
+    return `
+      <a class="line ${item.status === 'closed' ? 'is-closed' : ''}" href="#/r/${item.id}">
+        <span class="line-icon">${item.photo ? `<img src="${esc(item.photo)}" alt="" loading="lazy">` : icon(item.cat)}</span>
+        <span class="line-main"><b>${esc(item.title)}</b>
+          <small>${esc(t(`sub.${item.cat}.${item.sub}`))} · ${esc(item.city)} · ${esc(fmtRelative(item.created_at))}</small></span>
+        <span class="line-price">${esc(priceLabel(item))}</span>
+      </a>`;
+  }
+
+  function renderItems(items, view) {
+    if (view === 'list') return `<div class="rows">${items.map(rowCard).join('')}</div>`;
+    if (view === 'compact') return `<div class="lines">${items.map(lineCard).join('')}</div>`;
+    return `<div class="grid">${items.map((i) => card(i)).join('')}</div>`;
+  }
+
+  // ---------- Стрічка на мобільному: запити гортаються вертикально, як відео ----------
+
+  const isMobile = () => matchMedia('(max-width: 640px)').matches;
+  let feed = null; // { items, query, page, pages, details, observer, returnHash }
+
+  // Запам'ятовуємо список, з якого користувач відкриває запит, — по ньому й гортатиметься стрічка.
+  function setFeedContext(data, query, returnHash) {
+    state.feedCtx = { items: data.items.slice(), query: query || {}, page: data.page || 1, pages: data.pages || 1, returnHash };
+  }
+
+  function feedSlide(item, d) {
+    const r = d || item;
+    const photos = d ? d.photos : (item.photo ? [item.photo] : []);
+    const media = photos.length
+      ? `<div class="slide-photos">${photos.map((p) => `<img src="${esc(p)}" alt="" loading="lazy">`).join('')}</div>
+         ${photos.length > 1 ? `<span class="slide-count">${photos.length} ${icon('image')}</span>` : ''}`
+      : `<div class="card-placeholder slide-placeholder">${icon(r.cat)}</div>`;
+    let actions = '';
+    if (d) {
+      const contact = d.contact
+        ? `<a class="btn btn-ghost slide-icon-btn" href="https://t.me/${encodeURIComponent(d.contact)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(t('detail.contact'))}">${icon('telegram')}</a>`
+        : (d.is_owner ? '' : `<button class="btn btn-ghost slide-icon-btn" data-act="contact" aria-label="${esc(t('detail.loginForContact'))}">${icon('telegram')}</button>`);
+      let main;
+      if (d.is_owner) main = `<a class="btn btn-primary" href="#/r/${d.id}?view=page">${esc(t('detail.responses', { n: d.responses_count }))}</a>`;
+      else if (d.my_response) main = `<button class="btn btn-ghost" disabled>${esc(t('detail.responded'))}</button>`;
+      else main = `<button class="btn btn-primary" data-act="offer">${esc(t('detail.respondSend'))}</button>`;
+      actions = `<div class="slide-actions">${main}${contact}</div>`;
+    }
+    return `
+      <div class="slide-media">${media}<span class="badge">${esc(t(`sub.${r.cat}.${r.sub}`))}</span></div>
+      <div class="slide-info">
+        <div class="slide-price">${esc(priceLabel(r))}</div>
+        <h2>${esc(r.title)}</h2>
+        <div class="card-meta">${icon('pin')}<span>${esc(r.city)}, ${esc(t('country.' + r.country))}</span><span class="dot">·</span><span>${esc(fmtRelative(r.created_at))}</span></div>
+        <p class="slide-text">${esc(d ? d.description : (item.excerpt || ''))}</p>
+        <a class="link slide-more" href="#/r/${r.id}?view=page">${esc(t('feed.more'))} →</a>
+        ${d ? `<div class="slide-author">${avatar(d.author)}<span>${esc(d.author.name)}</span></div>` : ''}
+        ${actions}
+      </div>`;
+  }
+
+  async function loadSlide(index) {
+    const item = feed && feed.items[index];
+    if (!item || feed.details[item.id]) return;
+    feed.details[item.id] = 'loading';
+    try {
+      const d = await api('/requests/' + item.id);
+      if (!feed) return;
+      feed.details[item.id] = d;
+      const el = $(`.slide[data-id="${item.id}"]`);
+      if (el) el.innerHTML = feedSlide(item, d);
+    } catch (err) { if (feed) delete feed.details[item.id]; }
+  }
+
+  async function loadMoreSlides() {
+    if (!feed || feed.loadingMore || feed.page >= feed.pages) return;
+    feed.loadingMore = true;
+    try {
+      const data = await api('/requests?' + new URLSearchParams(Object.assign({}, feed.query, { page: feed.page + 1 })));
+      if (!feed) return;
+      feed.page = data.page;
+      feed.pages = data.pages;
+      const fresh = data.items.filter((i) => !feed.items.some((x) => x.id === i.id));
+      const scroller = $('#feed-scroll');
+      fresh.forEach((item) => {
+        feed.items.push(item);
+        scroller.insertAdjacentHTML('beforeend', `<section class="slide" data-id="${item.id}">${feedSlide(item)}</section>`);
+        feed.observer.observe(scroller.lastElementChild);
+      });
+    } catch (err) { /* наступна спроба — при наступному свайпі */ }
+    if (feed) feed.loadingMore = false;
+  }
+
+  function onSlideVisible(index) {
+    const item = feed.items[index];
+    history.replaceState(null, '', '#/r/' + item.id);
+    $('#feed-counter').textContent = `${index + 1} / ${feed.page < feed.pages ? feed.items.length + '+' : feed.items.length}`;
+    [index, index + 1, index - 1, index + 2].forEach(loadSlide);
+    if (index >= feed.items.length - 3) loadMoreSlides();
+  }
+
+  async function openFeed(id) {
+    id = Number(id);
+    let ctx = state.feedCtx && state.feedCtx.items.some((i) => i.id === id) ? state.feedCtx : null;
+    if (!ctx) {
+      // Відкрито за прямим посиланням: показуємо цей запит, а далі — нові запити.
+      let first;
+      try { first = await api('/requests/' + id); } catch (err) { closeFeed(); app.innerHTML = empty(t('err.not_found')); return; }
+      let data = { items: [], page: 1, pages: 1 };
+      try { data = await api('/requests'); } catch (err) { /* покажемо хоча б цей запит */ }
+      ctx = { items: [first].concat(data.items.filter((i) => i.id !== id)), query: {}, page: data.page, pages: data.pages, returnHash: '#/list' };
+      if (!app.innerHTML.trim()) viewHome();
+    }
+    closeFeed(true);
+    feed = { items: ctx.items.slice(), query: ctx.query, page: ctx.page, pages: ctx.pages, details: {}, returnHash: ctx.returnHash || '#/list' };
+    const start = Math.max(0, feed.items.findIndex((i) => i.id === id));
+    const root = document.createElement('div');
+    root.className = 'feed';
+    root.id = 'feed';
+    root.innerHTML = `
+      <div class="feed-top">
+        <button class="icon-btn" id="feed-back" aria-label="${esc(t('feed.back'))}">${icon('back')}</button>
+        <span class="feed-counter" id="feed-counter"></span>
+        <span class="feed-logo">zapyt<b>.biz</b></span>
+      </div>
+      <div class="feed-scroll" id="feed-scroll">
+        ${feed.items.map((item) => `<section class="slide" data-id="${item.id}">${feedSlide(item)}</section>`).join('')}
+      </div>
+      ${store.get('feedHint') ? '' : `<div class="feed-hint" id="feed-hint">${icon('up')}<span>${esc(t('feed.hint'))}</span></div>`}`;
+    document.body.appendChild(root);
+    document.body.classList.add('feed-open');
+    const scroller = $('#feed-scroll');
+    scroller.scrollTop = start * scroller.clientHeight;
+
+    feed.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || !feed) return;
+        const index = feed.items.findIndex((i) => i.id === Number(entry.target.dataset.id));
+        if (index >= 0) onSlideVisible(index);
+      });
+    }, { root: scroller, threshold: 0.6 });
+    $$('.slide', scroller).forEach((el) => feed.observer.observe(el));
+
+    const hint = $('#feed-hint');
+    if (hint) {
+      const hide = () => { hint.remove(); store.set('feedHint', '1'); };
+      setTimeout(hide, 3500);
+      // Слухаємо свайп трохи згодом: початкове прокручування до запиту теж дає подію scroll.
+      setTimeout(() => scroller.addEventListener('scroll', hide, { once: true }), 400);
+    }
+    $('#feed-back').addEventListener('click', () => { location.hash = feed.returnHash; });
+    scroller.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-act]');
+      if (!btn) return;
+      const slideId = Number(btn.closest('.slide').dataset.id);
+      if (btn.dataset.act === 'contact') requireLogin(() => refreshSlide(slideId));
+      if (btn.dataset.act === 'offer') requireLogin(() => openOfferSheet(slideId));
+    });
+  }
+
+  function refreshSlide(id) {
+    if (!feed) return;
+    delete feed.details[id];
+    loadSlide(feed.items.findIndex((i) => i.id === id));
+  }
+
+  function closeFeed(silent) {
+    if (feed && feed.observer) feed.observer.disconnect();
+    feed = null;
+    const el = $('#feed');
+    if (el) el.remove();
+    document.body.classList.remove('feed-open');
+    return silent;
+  }
+
+  function openOfferSheet(id) {
+    $('#modal-root').innerHTML = `
+      <div class="modal-backdrop sheet-backdrop" id="modal-backdrop">
+        <form class="modal sheet" id="offer-form">
+          <button type="button" class="icon-btn modal-close" id="modal-close" aria-label="${esc(t('login.close'))}">${icon('close')}</button>
+          <h2>${esc(t('detail.respondTitle'))}</h2>
+          <p class="muted small">${esc(t('detail.respondHint'))}</p>
+          <textarea name="text" rows="5" required minlength="2" maxlength="1000" placeholder="${esc(t('detail.respondPlaceholder'))}"></textarea>
+          <button class="btn btn-primary btn-block">${esc(t('detail.respondSend'))}</button>
+        </form>
+      </div>`;
+    $('#modal-close').addEventListener('click', closeModal);
+    $('#modal-backdrop').addEventListener('mousedown', (e) => { if (e.target.id === 'modal-backdrop') closeModal(); });
+    const form = $('#offer-form');
+    form.text.focus();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = form.text.value.trim();
+      if (PHONE_RE.test(text)) return toast(t('err.phone'), 'error');
+      try {
+        await api(`/requests/${id}/responses`, 'POST', { text });
+        closeModal();
+        toast(t('toast.responseSent'));
+        refreshSlide(id);
+      } catch (err) { toastError(err); }
+    });
   }
 
   // ---------- Сторінка запиту ----------
@@ -751,6 +987,7 @@
     });
     try {
       const [mine, responses] = await Promise.all([api('/requests?mine=1'), api('/my/responses')]);
+      setFeedContext(mine, { mine: '1' }, '#/me');
       $('#my-requests').innerHTML = mine.items.length
         ? `<div class="grid">${mine.items.map((i) => card(i, `<div class="card-extra">${esc(t('me.responsesCount', { n: i.responses_count }))}</div>`)).join('')}</div>`
         : `<p class="muted">${esc(t('me.noRequests'))}</p>`;
@@ -824,8 +1061,15 @@
     const hash = location.hash.replace(/^#/, '') || '/';
     const [path, query] = hash.split('?');
     const params = new URLSearchParams(query || '');
-    window.scrollTo(0, 0);
     let m;
+    if ((m = path.match(/^\/r\/(\d+)$/)) && isMobile() && params.get('view') !== 'page') return openFeed(m[1]);
+    if (feed) {
+      // Вихід зі стрічки назад до того ж списку — без перезавантаження, щоб зберегти прокрутку.
+      const back = feed.returnHash === '#' + hash || (feed.returnHash === '#/' && hash === '/');
+      closeFeed();
+      if (back && app.innerHTML.trim()) return;
+    }
+    window.scrollTo(0, 0);
     if (path === '/') return viewHome();
     if (path === '/list') return viewList(params);
     if ((m = path.match(/^\/r\/(\d+)$/))) return viewDetail(m[1]);
@@ -851,6 +1095,11 @@
     } catch (err) { toastError(err); }
     renderChrome();
     window.addEventListener('hashchange', route);
+    // Якщо вікно розширили до розміру комп'ютера — стрічка змінюється звичайною сторінкою запиту.
+    matchMedia('(max-width: 640px)').addEventListener('change', (e) => {
+      const m = location.hash.match(/^#\/r\/(\d+)$/);
+      if (!e.matches && feed && m) { closeFeed(); viewDetail(m[1]); }
+    });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
     route();
   }
