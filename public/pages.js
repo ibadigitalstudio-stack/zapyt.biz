@@ -7,23 +7,23 @@ const PAGES = {
       updated: 'Оновлено 14 жовтня 2026 р.',
       html: `
         <h2>1. Хто обробляє дані</h2>
-        <p>Сайт zapyt.biz (далі — «платформа») обробляє персональні дані користувачів, щоб вони могли публікувати запити та відповідати на них. Із питань щодо даних пишіть на <a href="mailto:info@zapyt.biz">info@zapyt.biz</a>.</p>
+        <p>Сайт zapyt.biz (далі — «платформа») обробляє персональні дані користувачів, щоб вони могли публікувати запити та надсилати на них пропозиції. Із питань щодо даних пишіть на <a href="mailto:info@zapyt.biz">info@zapyt.biz</a>.</p>
         <h2>2. Які дані ми збираємо</h2>
         <ul>
           <li><b>Дані з Telegram</b> під час входу: ідентифікатор акаунта, нік, ім’я та фото профілю.</li>
           <li><b>Номер телефону</b> — лише для SMS-підтвердження під час реєстрації. Номер не публікується, не показується іншим користувачам і не використовується для реклами.</li>
-          <li><b>Те, що ви публікуєте:</b> запити, фото, відповіді на запити інших користувачів.</li>
+          <li><b>Те, що ви публікуєте:</b> запити, фото, пропозиції на запити інших користувачів.</li>
           <li><b>Технічні дані:</b> файл cookie сесії, а також вибрані мова й тема, які зберігаються у вашому браузері.</li>
         </ul>
         <h2>3. Навіщо ми їх використовуємо</h2>
         <ul>
           <li>щоб створити акаунт і впізнавати вас під час входу;</li>
           <li>щоб підтвердити, що акаунт належить реальній людині, і захистити платформу від шахрайства та спаму;</li>
-          <li>щоб показувати ваші запити й передавати ваші відповіді авторам запитів;</li>
-          <li>щоб надсилати сповіщення про нові відповіді в Telegram, якщо ви запустили нашого бота.</li>
+          <li>щоб показувати ваші запити й передавати ваші пропозиції авторам запитів;</li>
+          <li>щоб надсилати сповіщення про нові пропозиції в Telegram, якщо ви запустили нашого бота.</li>
         </ul>
         <h2>4. Що бачать інші користувачі</h2>
-        <p>У запиті видно ваше ім’я, фото профілю та текст запиту. Ваш нік у Telegram бачать лише зареєстровані користувачі з підтвердженим номером. Автор запиту бачить вашу відповідь і ваш нік. Номер телефону не бачить ніхто з користувачів.</p>
+        <p>У запиті видно ваше ім’я, фото профілю та текст запиту. Ваш нік у Telegram бачать лише зареєстровані користувачі з підтвердженим номером. Автор запиту бачить вашу пропозицію і ваш нік. Номер телефону не бачить ніхто з користувачів.</p>
         <h2>5. Кому ми передаємо дані</h2>
         <p>Ми не продаємо персональні дані. Вони передаються лише сервісам, без яких платформа не працює: Telegram (вхід і сповіщення), оператору SMS-розсилки (надсилання коду) та хостинг-провайдеру (зберігання даних).</p>
         <h2>6. Скільки зберігаються дані</h2>
@@ -40,17 +40,17 @@ const PAGES = {
       updated: 'Оновлено 14 жовтня 2026 р.',
       html: `
         <h2>1. Загальні положення</h2>
-        <p>zapyt.biz — це платформа, де користувачі публікують запити та відповідають на них. Платформа не є стороною угод між користувачами й не продає товари чи послуги від свого імені. Користуючись сайтом, ви погоджуєтеся з цими правилами.</p>
+        <p>zapyt.biz — це платформа, де користувачі публікують запити про те, що шукають, а інші користувачі надсилають їм свої пропозиції. Платформа не є стороною угод між користувачами й не продає товари чи послуги від свого імені. Користуючись сайтом, ви погоджуєтеся з цими правилами.</p>
         <h2>2. Реєстрація</h2>
         <ul>
-          <li>Публікувати запити й відповідати на них можуть лише зареєстровані користувачі віком від 18 років.</li>
+          <li>Публікувати запити й надсилати пропозиції можуть лише зареєстровані користувачі віком від 18 років.</li>
           <li>Реєстрація відбувається через Telegram і підтверджується кодом із SMS.</li>
           <li>Одна людина — один акаунт. Один номер телефону можна прив’язати лише до одного акаунта.</li>
         </ul>
         <h2>3. Дозволені категорії</h2>
-        <p>Запити приймаються лише в категоріях: Авто (продаж авто, продаж запчастин, ремонт авто), Нерухомість (продаж, оренда), Благодійність (віддам даром), Робота (вакансії, резюме), Знайомства (анкети).</p>
+        <p>Користувачі публікують запити про те, що вони шукають, а інші користувачі надсилають на них свої пропозиції. Запити приймаються лише в категоріях: Авто (куплю авто, шукаю запчастини, потрібен ремонт), Нерухомість (куплю, орендую), Благодійність (потрібна допомога), Робота (шукаю роботу, шукаю працівника), Знайомства (шукаю пару).</p>
         <h2>4. Контакти</h2>
-        <p>Єдиний спосіб зв’язку між користувачами — Telegram. Вказувати номери телефонів у заголовку, описі запиту чи у відповіді заборонено: такі тексти автоматично відхиляються.</p>
+        <p>Єдиний спосіб зв’язку між користувачами — Telegram. Вказувати номери телефонів у заголовку, описі запиту чи в пропозиції заборонено: такі тексти автоматично відхиляються.</p>
         <h2>5. Що заборонено</h2>
         <ul>
           <li>неправдиві, оманливі запити та шахрайство;</li>
@@ -59,10 +59,10 @@ const PAGES = {
           <li>чужі фото й тексти без дозволу власника;</li>
           <li>образи, погрози, дискримінація;</li>
           <li>у розділі «Знайомства» — відверті матеріали, платні інтимні послуги та анкети неповнолітніх;</li>
-          <li>у розділі «Благодійність» — вимагати гроші за речі, заявлені як безкоштовні.</li>
+          <li>у розділі «Благодійність» — вимагати оплату за допомогу, запропоновану безкоштовно.</li>
         </ul>
-        <h2>6. Відповіді на запити</h2>
-        <p>На один запит можна відповісти один раз. Відповідь бачить тільки автор запиту. Подальше спілкування відбувається в Telegram.</p>
+        <h2>6. Пропозиції на запити</h2>
+        <p>На один запит можна надіслати одну пропозицію. Пропозицію бачить тільки автор запиту. Подальше спілкування відбувається в Telegram.</p>
         <h2>7. Платні пакети</h2>
         <p>Базове розміщення запитів безкоштовне. Умови платних пакетів описані на сторінці <a href="#/pricing">«Тарифи»</a>.</p>
         <h2>8. Модерація</h2>
@@ -80,23 +80,23 @@ const PAGES = {
       updated: 'Aktualizacja: 14 października 2026 r.',
       html: `
         <h2>1. Kto przetwarza dane</h2>
-        <p>Serwis zapyt.biz (dalej „platforma”) przetwarza dane osobowe użytkowników, aby mogli publikować zapytania i na nie odpowiadać. W sprawach dotyczących danych napisz na <a href="mailto:info@zapyt.biz">info@zapyt.biz</a>.</p>
+        <p>Serwis zapyt.biz (dalej „platforma”) przetwarza dane osobowe użytkowników, aby mogli publikować zapytania i wysyłać na nie oferty. W sprawach dotyczących danych napisz na <a href="mailto:info@zapyt.biz">info@zapyt.biz</a>.</p>
         <h2>2. Jakie dane zbieramy</h2>
         <ul>
           <li><b>Dane z Telegrama</b> podczas logowania: identyfikator konta, nick, imię i zdjęcie profilowe.</li>
           <li><b>Numer telefonu</b> — wyłącznie do potwierdzenia SMS przy rejestracji. Numer nie jest publikowany, nie widzą go inni użytkownicy i nie służy do reklamy.</li>
-          <li><b>To, co publikujesz:</b> zapytania, zdjęcia, odpowiedzi na zapytania innych użytkowników.</li>
+          <li><b>To, co publikujesz:</b> zapytania, zdjęcia, oferty na zapytania innych użytkowników.</li>
           <li><b>Dane techniczne:</b> plik cookie sesji oraz wybrany język i motyw zapisane w Twojej przeglądarce.</li>
         </ul>
         <h2>3. Po co ich używamy</h2>
         <ul>
           <li>aby założyć konto i rozpoznawać Cię przy logowaniu;</li>
           <li>aby potwierdzić, że konto należy do prawdziwej osoby, i chronić platformę przed oszustwami i spamem;</li>
-          <li>aby wyświetlać Twoje zapytania i przekazywać Twoje odpowiedzi autorom zapytań;</li>
-          <li>aby wysyłać powiadomienia o nowych odpowiedziach na Telegramie, jeśli uruchomisz naszego bota.</li>
+          <li>aby wyświetlać Twoje zapytania i przekazywać Twoje oferty autorom zapytań;</li>
+          <li>aby wysyłać powiadomienia o nowych ofertach na Telegramie, jeśli uruchomisz naszego bota.</li>
         </ul>
         <h2>4. Co widzą inni użytkownicy</h2>
-        <p>W zapytaniu widać Twoje imię, zdjęcie profilowe i treść zapytania. Twój nick na Telegramie widzą tylko zarejestrowani użytkownicy z potwierdzonym numerem. Autor zapytania widzi Twoją odpowiedź i Twój nick. Numeru telefonu nie widzi żaden użytkownik.</p>
+        <p>W zapytaniu widać Twoje imię, zdjęcie profilowe i treść zapytania. Twój nick na Telegramie widzą tylko zarejestrowani użytkownicy z potwierdzonym numerem. Autor zapytania widzi Twoją ofertę i Twój nick. Numeru telefonu nie widzi żaden użytkownik.</p>
         <h2>5. Komu przekazujemy dane</h2>
         <p>Nie sprzedajemy danych osobowych. Trafiają one tylko do usług, bez których platforma nie działa: Telegram (logowanie i powiadomienia), operator wysyłki SMS (wysłanie kodu) oraz dostawca hostingu (przechowywanie danych).</p>
         <h2>6. Jak długo przechowujemy dane</h2>
@@ -113,17 +113,17 @@ const PAGES = {
       updated: 'Aktualizacja: 14 października 2026 r.',
       html: `
         <h2>1. Postanowienia ogólne</h2>
-        <p>zapyt.biz to platforma, na której użytkownicy publikują zapytania i na nie odpowiadają. Platforma nie jest stroną umów między użytkownikami i nie sprzedaje towarów ani usług we własnym imieniu. Korzystając z serwisu, akceptujesz ten regulamin.</p>
+        <p>zapyt.biz to platforma, na której użytkownicy publikują zapytania o to, czego szukają, a inni użytkownicy wysyłają im swoje oferty. Platforma nie jest stroną umów między użytkownikami i nie sprzedaje towarów ani usług we własnym imieniu. Korzystając z serwisu, akceptujesz ten regulamin.</p>
         <h2>2. Rejestracja</h2>
         <ul>
-          <li>Publikować zapytania i odpowiadać na nie mogą tylko zarejestrowani użytkownicy, którzy ukończyli 18 lat.</li>
+          <li>Publikować zapytania i wysyłać oferty mogą tylko zarejestrowani użytkownicy, którzy ukończyli 18 lat.</li>
           <li>Rejestracja odbywa się przez Telegram i jest potwierdzana kodem SMS.</li>
           <li>Jedna osoba — jedno konto. Jeden numer telefonu można przypisać tylko do jednego konta.</li>
         </ul>
         <h2>3. Dozwolone kategorie</h2>
-        <p>Zapytania przyjmujemy tylko w kategoriach: Motoryzacja (sprzedaż aut, sprzedaż części, naprawa aut), Nieruchomości (sprzedaż, wynajem), Dobroczynność (oddam za darmo), Praca (oferty pracy, CV), Znajomości (profile).</p>
+        <p>Użytkownicy publikują zapytania o to, czego szukają, a inni użytkownicy wysyłają im swoje oferty. Zapytania przyjmujemy tylko w kategoriach: Motoryzacja (kupię auto, szukam części, potrzebna naprawa), Nieruchomości (kupię, szukam do wynajęcia), Dobroczynność (potrzebuję pomocy), Praca (szukam pracy, szukam pracownika), Znajomości (szukam drugiej połówki).</p>
         <h2>4. Kontakt</h2>
-        <p>Jedynym sposobem kontaktu między użytkownikami jest Telegram. Podawanie numerów telefonów w tytule, opisie zapytania lub w odpowiedzi jest zabronione: takie treści są automatycznie odrzucane.</p>
+        <p>Jedynym sposobem kontaktu między użytkownikami jest Telegram. Podawanie numerów telefonów w tytule, opisie zapytania lub w ofercie jest zabronione: takie treści są automatycznie odrzucane.</p>
         <h2>5. Czego nie wolno</h2>
         <ul>
           <li>publikować nieprawdziwych lub wprowadzających w błąd zapytań ani oszukiwać;</li>
@@ -132,10 +132,10 @@ const PAGES = {
           <li>używać cudzych zdjęć i tekstów bez zgody właściciela;</li>
           <li>obrażać, grozić, dyskryminować;</li>
           <li>w dziale „Znajomości” — publikować treści erotycznych, płatnych usług intymnych i profili osób niepełnoletnich;</li>
-          <li>w dziale „Dobroczynność” — żądać pieniędzy za rzeczy zgłoszone jako darmowe.</li>
+          <li>w dziale „Dobroczynność” — żądać zapłaty za pomoc zaoferowaną bezpłatnie.</li>
         </ul>
-        <h2>6. Odpowiedzi na zapytania</h2>
-        <p>Na jedno zapytanie można odpowiedzieć jeden raz. Odpowiedź widzi tylko autor zapytania. Dalsza rozmowa odbywa się na Telegramie.</p>
+        <h2>6. Oferty na zapytania</h2>
+        <p>Na jedno zapytanie można wysłać jedną ofertę. Ofertę widzi tylko autor zapytania. Dalsza rozmowa odbywa się na Telegramie.</p>
         <h2>7. Płatne pakiety</h2>
         <p>Podstawowe dodawanie zapytań jest bezpłatne. Warunki płatnych pakietów opisuje strona <a href="#/pricing">„Cennik”</a>.</p>
         <h2>8. Moderacja</h2>

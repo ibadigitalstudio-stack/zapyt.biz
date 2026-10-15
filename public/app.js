@@ -3,11 +3,11 @@
   'use strict';
 
   const CATS = {
-    auto: ['car_sale', 'parts', 'repair'],
-    realty: ['sale', 'rent'],
-    charity: ['give'],
-    jobs: ['vacancy', 'resume'],
-    dating: ['profile'],
+    auto: ['buy_car', 'parts', 'repair'],
+    realty: ['buy', 'rent'],
+    charity: ['need'],
+    jobs: ['job', 'worker'],
+    dating: ['partner'],
   };
   const NO_PRICE = ['charity', 'dating'];
   const CURRENCIES = ['UAH', 'PLN', 'USD', 'EUR'];
@@ -73,7 +73,9 @@
       return item.attrs && item.attrs.age ? `${t('gender.' + item.attrs.gender)}, ${t('dating.age', { n: item.attrs.age })}` : '';
     }
     if (item.price == null) return t(item.cat === 'jobs' ? 'price.salaryNone' : 'price.negotiable');
-    return new Intl.NumberFormat(locale()).format(item.price) + ' ' + item.currency;
+    const amount = new Intl.NumberFormat(locale()).format(item.price) + ' ' + item.currency;
+    // Для запитів у сумі вказано бюджет («до …»), для роботи — зарплату.
+    return item.cat === 'jobs' ? amount : t('price.upTo', { amount });
   }
 
   async function api(path, method, body) {
@@ -350,6 +352,12 @@
         </form>
       </section>
       <section>
+        <h2 class="section-title">${esc(t('how.title'))}</h2>
+        <ol class="how">
+          ${[1, 2, 3].map((n) => `<li><span class="how-num">${n}</span><b>${esc(t(`how.${n}t`))}</b><p class="muted">${esc(t(`how.${n}d`))}</p></li>`).join('')}
+        </ol>
+      </section>
+      <section>
         <h2 class="section-title">${esc(t('home.categories'))}</h2>
         <div class="cat-grid">
           ${Object.keys(CATS).map((cat) => `
@@ -603,7 +611,7 @@
       app.innerHTML = empty(t('err.auth'));
       return requireLogin(() => viewForm(editId));
     }
-    let r = { cat: 'auto', sub: 'car_sale', title: '', description: '', country: state.lang === 'pl' ? 'PL' : 'UA', city: '', price: null, currency: state.lang === 'pl' ? 'PLN' : 'UAH', attrs: {}, photos: [] };
+    let r = { cat: 'auto', sub: 'buy_car', title: '', description: '', country: state.lang === 'pl' ? 'PL' : 'UA', city: '', price: null, currency: state.lang === 'pl' ? 'PLN' : 'UAH', attrs: {}, photos: [] };
     if (editId) {
       app.innerHTML = loading();
       try { r = await api('/requests/' + editId); } catch (err) { app.innerHTML = empty(t('err.not_found')); return; }
@@ -621,7 +629,7 @@
           <label class="field"><span>${esc(t('form.subcategory'))}</span><select name="sub"></select></label>
         </div>
         <label class="field"><span>${esc(t('form.title'))}</span>
-          <input name="title" value="${esc(r.title)}" maxlength="80" required><small>${esc(t('form.titleHint'))}</small></label>
+          <input name="title" value="${esc(r.title)}" maxlength="80" required placeholder="${esc(t('form.titlePlaceholder'))}"><small>${esc(t('form.titleHint'))}</small></label>
         <label class="field"><span>${esc(t('form.description'))}</span>
           <textarea name="description" rows="7" maxlength="4000" required>${esc(r.description)}</textarea><small>${esc(t('form.descriptionHint'))}</small></label>
         <div class="row" id="dating-fields" hidden>

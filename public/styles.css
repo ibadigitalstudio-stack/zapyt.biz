@@ -138,6 +138,11 @@ main.container { flex: 1; padding-top: 24px; padding-bottom: 56px; }
 .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 #app > section + section, .grid + .section-title, p + .section-title { margin-top: 40px; }
 
+.how { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.how li { display: grid; gap: 6px; padding: 18px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
+.how-num { width: 32px; height: 32px; border-radius: 50%; background: var(--green); color: var(--on-green); display: grid; place-items: center; font-weight: 800; }
+.how p { font-size: 14px; }
+
 .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
 .cat-card { padding: 18px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
 .cat-card:hover { border-color: var(--green); }
