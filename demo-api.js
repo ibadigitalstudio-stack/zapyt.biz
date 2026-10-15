@@ -3,8 +3,8 @@
 const DemoApi = (function () {
   'use strict';
 
-  const KEY = 'zapyt-demo-v1';
-  const CATS = { auto: ['car_sale', 'parts', 'repair'], realty: ['sale', 'rent'], charity: ['give'], jobs: ['vacancy', 'resume'], dating: ['profile'] };
+  const KEY = 'zapyt-demo-v2';
+  const CATS = {auto: ['buy_car', 'parts', 'repair'], realty: ['buy', 'rent'], charity: ['need'], jobs: ['job', 'worker'], dating: ['partner']};
   const NO_PRICE = ['charity', 'dating'];
   const PHONE_RE = /(?:\+?\d[\s\-().]{0,2}){9,}/;
   const USERNAME_RE = /^[A-Za-z][A-Za-z0-9_]{4,31}$/;
@@ -21,18 +21,18 @@ const DemoApi = (function () {
       { id: 3, username: 'taras_demo', name: 'Тарас' }, { id: 4, username: 'kasia_demo', name: 'Kasia' },
     ].map((u) => Object.assign(u, { photo: null, verified: true, phone: null, created_at: ts - 90 * 86400 }));
     const rows = [
-      [3, 'auto', 'car_sale', 'Volkswagen Passat B8 2017, 2.0 TDI, універсал', 'Один власник в Україні, сервісна книжка, обслуговувався вчасно. Не бита, не фарбована. Торг біля авто.', 'UA', 'Львів', 16500, 'USD', {}],
-      [2, 'auto', 'parts', 'Felgi aluminiowe 17" 5x112 z oponami zimowymi', 'Komplet czterech felg z oponami zimowymi, bieżnik 6 mm. Pasują do VW, Audi, Skody. Odbiór osobisty.', 'PL', 'Kraków', 1800, 'PLN', {}],
-      [3, 'auto', 'repair', 'Ремонт ходової та діагностика, виїзд до клієнта', 'Діагностика, заміна гальмівних колодок, ремонт підвіски. Гарантія на роботи. Запис через Telegram.', 'UA', 'Київ', null, null, {}],
-      [1, 'realty', 'rent', 'Оренда 2-кімнатної квартири біля метро', 'Світла квартира після ремонту, 54 м², є вся техніка та меблі. Можна з тваринами. Довгострокова оренда.', 'UA', 'Київ', 18000, 'UAH', {}],
-      [4, 'realty', 'sale', 'Mieszkanie 3 pokoje, 62 m², balkon, Mokotów', 'Trzecie piętro z windą, miejsce postojowe w garażu. Blisko metro i park. Bez pośredników.', 'PL', 'Warszawa', 890000, 'PLN', {}],
-      [4, 'realty', 'rent', 'Pokój do wynajęcia dla studentki, centrum', 'Pokój 14 m² w mieszkaniu trzypokojowym, wszystkie media w cenie, szybki internet.', 'PL', 'Wrocław', 1400, 'PLN', {}],
-      [1, 'charity', 'give', 'Віддам дитячий візочок та одяг на 1–2 роки', 'Візочок у доброму стані, два пакети одягу на хлопчика. Самовивіз, пишіть у Telegram.', 'PL', 'Warszawa', null, null, {}],
-      [2, 'charity', 'give', 'Oddam za darmo biurko i krzesło obrotowe', 'Biurko 120x60 cm, krzesło sprawne. Odbiór własny w weekend, drugie piętro bez windy.', 'PL', 'Poznań', null, null, {}],
-      [2, 'jobs', 'vacancy', 'Magazynier — praca od zaraz, umowa o pracę', 'Praca w systemie dwuzmianowym, szkolenie na wózki widłowe, pomoc w zakwaterowaniu. Stawka netto za miesiąc.', 'PL', 'Łódź', 5200, 'PLN', {}],
-      [3, 'jobs', 'resume', 'Електрик з досвідом 8 років шукає роботу', 'Монтаж проводки, щитків, освітлення. Маю допуски та власний інструмент. Розгляну роботу в Україні та Польщі.', 'UA', 'Тернопіль', 35000, 'UAH', {}],
-      [1, 'dating', 'profile', 'Шукаю людину для серйозних стосунків', 'Люблю гори, книжки та довгі прогулянки містом. Працюю дизайнеркою. Напишіть, якщо вам теж цікаво.', 'UA', 'Львів', null, null, { age: 29, gender: 'f' }],
-      [2, 'dating', 'profile', 'Poznam kogoś do wspólnych wypadów rowerowych', 'Lubię rower, kino i dobrą kawę. Szukam osoby z poczuciem humoru, która nie boi się długich tras.', 'PL', 'Gdańsk', null, null, { age: 34, gender: 'm' }],
+      [3, "auto", "buy_car", "Куплю Toyota RAV4 2018–2021, гібрид або бензин", "Шукаю RAV4 у хорошому стані, бажано один власник і сервісна історія. Розгляну варіанти з Польщі. Готовий подивитися авто протягом тижня.", "UA", "Київ", 25000, "USD", {}],
+      [2, "auto", "parts", "Szukam zderzaka przedniego do Skody Octavii III", "Potrzebny zderzak przedni w kolorze srebrnym, rocznik 2016, wersja przed liftem. Może być używany, bez pęknięć.", "PL", "Kraków", 600, "PLN", {}],
+      [1, "auto", "repair", "Потрібен ремонт кондиціонера в авто", "Не холодить кондиціонер у Hyundai Tucson 2017. Потрібна діагностика й заправка, бажано з гарантією. Можу приїхати в будній день.", "UA", "Львів", 3000, "UAH", {}],
+      [4, "realty", "rent", "Szukam mieszkania 2-pokojowego do wynajęcia", "Para bez zwierząt, oboje pracujemy. Interesuje nas Mokotów lub Ochota, blisko metra, od listopada na dłużej.", "PL", "Warszawa", 3800, "PLN", {}],
+      [1, "realty", "buy", "Куплю 1-кімнатну квартиру в новобудові", "Розглядаю новобудови з ремонтом або під ремонт, до 45 м², не вище 10 поверху. Без посередників, готова до швидкої угоди.", "UA", "Київ", 60000, "USD", {}],
+      [3, "realty", "rent", "Орендую гараж або паркомісце біля центру", "Потрібне місце для легкового авто на тривалий термін, бажано під охороною. Розгляну варіанти в радіусі 2 км від центру.", "UA", "Тернопіль", 1500, "UAH", {}],
+      [1, "charity", "need", "Потрібні теплі речі для дитини 2 років", "Ми переселенці, шукаємо теплий одяг на зиму та взуття 24 розміру для хлопчика. Будемо вдячні за будь-яку допомогу.", "PL", "Warszawa", null, null, {}],
+      [2, "charity", "need", "Potrzebuję łóżka i szafy do pokoju", "Urządzam pokój dla mamy po przeprowadzce. Chętnie przyjmę używane meble, odbiorę sam w weekend.", "PL", "Poznań", null, null, {}],
+      [2, "jobs", "worker", "Szukam magazyniera od zaraz, umowa o pracę", "Praca dwuzmianowa, szkolenie na wózki widłowe na nasz koszt, pomoc w zakwaterowaniu. Odpowiedz, jeśli szukasz stałej pracy.", "PL", "Łódź", 5200, "PLN", {}],
+      [3, "jobs", "job", "Шукаю роботу електриком, досвід 8 років", "Монтаж проводки, щитків, освітлення. Маю допуски та власний інструмент. Розгляну пропозиції в Україні та Польщі.", "UA", "Тернопіль", 35000, "UAH", {}],
+      [1, "dating", "partner", "Шукаю людину для серйозних стосунків", "Люблю гори, книжки та довгі прогулянки містом. Працюю дизайнеркою. Напишіть, якщо вам теж цікаво.", "UA", "Львів", null, null, {"age": 29, "gender": "f"}],
+      [2, "dating", "partner", "Poznam kogoś do wspólnych wypadów rowerowych", "Lubię rower, kino i dobrą kawę. Szukam osoby z poczuciem humoru, która nie boi się długich tras.", "PL", "Gdańsk", null, null, {"age": 34, "gender": "m"}],
     ];
     // Порядок перемішано, щоб на головній одразу було видно різні категорії.
     const order = [0, 6, 3, 8, 10, 1, 4, 7, 9, 2, 11, 5];
