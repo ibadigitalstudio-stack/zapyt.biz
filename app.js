@@ -31,6 +31,8 @@
     grid: '<rect x="4" y="4" width="7" height="7" rx="1.500"/><rect x="13" y="4" width="7" height="7" rx="1.500"/><rect x="4" y="13" width="7" height="7" rx="1.500"/><rect x="13" y="13" width="7" height="7" rx="1.500"/>',
     list: '<rect x="4" y="5" width="6" height="6" rx="1.500"/><rect x="4" y="13" width="6" height="6" rx="1.500"/><path d="M13 7h7M13 10h5M13 15h7M13 18h5"/>',
     compact: '<path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>',
+    feed: '<rect x="6" y="3" width="12" height="18" rx="3"/><path d="m10.500 9.500 4 2.500-4 2.500Z"/>',
+    filter: '<path d="M4 5h16l-6 7.500V19l-4-2v-4.500L4 5Z"/>',
     up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
     image: '<rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.500"/><path d="m20 16-5-5-8 8"/>',
     telegram: '<path d="M20.500 4.500 3.500 11l5 2 2 6 3-4 4.500 3.500 2.500-14Z"/><path d="m8.500 13 9-6.500"/>',
@@ -396,7 +398,7 @@
       cat: CATS[params.get('cat')] ? params.get('cat') : '',
       sub: params.get('sub') || '', q: params.get('q') || '', country: params.get('country') || '',
       city: params.get('city') || '', price_min: params.get('price_min') || '', price_max: params.get('price_max') || '',
-      sort: params.get('sort') || '', page: params.get('page') || '',
+      sort: params.get('sort') || '', page: params.get('page') || '', view: params.get('view') || '',
     };
     if (!f.cat || !CATS[f.cat].includes(f.sub)) f.sub = '';
     const showPrice = !NO_PRICE.includes(f.cat);
@@ -447,15 +449,18 @@
 
     try {
       const query = {};
-      Object.keys(f).forEach((k) => { if (f[k]) query[k] = f[k]; });
+      Object.keys(f).forEach((k) => { if (f[k] && k !== 'view') query[k] = f[k]; });
       const data = await api('/requests?' + new URLSearchParams(query));
       setFeedContext(data, query, location.hash);
-      const view = VIEWS.includes(store.get('catalogView')) ? store.get('catalogView') : 'grid';
+      const views = isMobile() ? ['feed'].concat(VIEWS) : VIEWS;
+      const saved = store.get('catalogView');
+      const view = VIEWS.includes(saved) ? saved : 'grid';
+      const activeView = isMobile() && store.get('mobileFeed') !== '0' ? 'feed' : view;
       $('#results').innerHTML = data.items.length ? `
         <div class="results-bar">
           <p class="muted results-count">${esc(t('list.found', { n: data.total }))}</p>
           <div class="view-switch" role="group" aria-label="${esc(t('view.label'))}">
-            ${VIEWS.map((v) => `<button class="${v === view ? 'on' : ''}" data-view="${v}" title="${esc(t('view.' + v))}" aria-label="${esc(t('view.' + v))}" aria-pressed="${v === view}">${icon(v)}<span>${esc(t('view.' + v))}</span></button>`).join('')}
+            ${views.map((v) => `<button class="${v === activeView ? 'on' : ''}" data-view="${v}" title="${esc(t('view.' + v))}" aria-label="${esc(t('view.' + v))}" aria-pressed="${v === activeView}">${icon(v)}<span>${esc(t('view.' + v))}</span></button>`).join('')}
           </div>
         </div>
         <div id="items">${renderItems(data.items, view)}</div>
@@ -466,6 +471,13 @@
             ${data.page < data.pages ? `<a class="btn btn-ghost" href="${listHash(Object.assign({}, f, { page: data.page + 1 }))}">${esc(t('list.next'))} →</a>` : '<span></span>'}
           </nav>` : ''}` : empty(t('list.empty'), t('list.emptyHint'));
       $$('[data-view]').forEach((btn) => btn.addEventListener('click', () => {
+        if (btn.dataset.view === 'feed') {
+          store.set('mobileFeed', '1');
+          const target = listHash(Object.assign({}, f, { view: '', page: '' }));
+          if (location.hash === target) route(); else location.hash = target;
+          return;
+        }
+        if (isMobile()) store.set('mobileFeed', '0');
         store.set('catalogView', btn.dataset.view);
         $('#items').innerHTML = renderItems(data.items, btn.dataset.view);
         $$('[data-view]').forEach((b) => { b.classList.toggle('on', b === btn); b.setAttribute('aria-pressed', b === btn); });
@@ -599,22 +611,41 @@
       let data = { items: [], page: 1, pages: 1 };
       try { data = await api('/requests'); } catch (err) { /* покажемо хоча б цей запит */ }
       ctx = { items: [first].concat(data.items.filter((i) => i.id !== id)), query: {}, page: data.page, pages: data.pages, returnHash: '#/list' };
-      if (!app.innerHTML.trim()) viewHome();
+      if (!app.innerHTML.trim()) { state.appHash = '/'; viewHome(); }
     }
+    showFeed(ctx, id);
+  }
+
+  // На телефоні каталог одразу відкривається стрічкою: перший запит на весь екран, далі — свайп.
+  async function openListFeed(params) {
+    const query = {};
+    ['cat', 'sub', 'q', 'country', 'city', 'price_min', 'price_max', 'sort'].forEach((k) => { if (params.get(k)) query[k] = params.get(k); });
+    let data;
+    try { data = await api('/requests?' + new URLSearchParams(query)); } catch (err) { toastError(err); return; }
+    if (state.appHash !== '/') { state.appHash = '/'; viewHome(); }
+    showFeed({ items: data.items, query, page: data.page, pages: data.pages, returnHash: '#/', listMode: true },
+      data.items.length ? data.items[0].id : null);
+  }
+
+  function showFeed(ctx, id) {
     closeFeed(true);
-    feed = { items: ctx.items.slice(), query: ctx.query, page: ctx.page, pages: ctx.pages, details: {}, returnHash: ctx.returnHash || '#/list' };
+    feed = { items: ctx.items.slice(), query: ctx.query, page: ctx.page, pages: ctx.pages, details: {}, returnHash: ctx.returnHash || '#/list', listMode: !!ctx.listMode };
     const start = Math.max(0, feed.items.findIndex((i) => i.id === id));
     const root = document.createElement('div');
-    root.className = 'feed';
+    root.className = 'feed' + (feed.listMode ? ' list-mode' : '');
     root.id = 'feed';
     root.innerHTML = `
       <div class="feed-top">
         <button class="icon-btn" id="feed-back" aria-label="${esc(t('feed.back'))}">${icon('back')}</button>
         <span class="feed-counter" id="feed-counter"></span>
         <span class="feed-logo">zapyt<b>.biz</b></span>
+        ${feed.listMode ? `
+          <a class="icon-btn" href="${listHash(Object.assign({}, feed.query, { view: 'filters' }))}" aria-label="${esc(t('feed.filters'))}" title="${esc(t('feed.filters'))}">${icon('filter')}</a>
+          <nav class="feed-cats">${[''].concat(Object.keys(CATS)).map((c) => `<a class="${(feed.query.cat || '') === c ? 'on' : ''}" href="${listHash({ cat: c, q: feed.query.q || '' })}">${esc(c ? t('cat.' + c) : t('feed.all'))}</a>`).join('')}</nav>` : ''}
       </div>
       <div class="feed-scroll" id="feed-scroll">
-        ${feed.items.map((item) => `<section class="slide" data-id="${item.id}">${feedSlide(item)}</section>`).join('')}
+        ${feed.items.length ? feed.items.map((item) => `<section class="slide" data-id="${item.id}">${feedSlide(item)}</section>`).join('')
+          : `<section class="slide slide-empty">${empty(t('list.empty'), t('list.emptyHint'))}</section>`}
       </div>
       ${store.get('feedHint') ? '' : `<div class="feed-hint" id="feed-hint">${icon('up')}<span>${esc(t('feed.hint'))}</span></div>`}`;
     document.body.appendChild(root);
@@ -1065,10 +1096,13 @@
     if ((m = path.match(/^\/r\/(\d+)$/)) && isMobile() && params.get('view') !== 'page') return openFeed(m[1]);
     if (feed) {
       // Вихід зі стрічки назад до того ж списку — без перезавантаження, щоб зберегти прокрутку.
-      const back = feed.returnHash === '#' + hash || (feed.returnHash === '#/' && hash === '/');
+      // state.appHash — яка сторінка зараз намальована під стрічкою.
+      const back = state.appHash === hash;
       closeFeed();
       if (back && app.innerHTML.trim()) return;
     }
+    if (path === '/list' && isMobile() && params.get('view') !== 'filters' && store.get('mobileFeed') !== '0') return openListFeed(params);
+    state.appHash = hash;
     window.scrollTo(0, 0);
     if (path === '/') return viewHome();
     if (path === '/list') return viewList(params);
