@@ -33,6 +33,8 @@
     compact: '<path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>',
     feed: '<rect x="6" y="3" width="12" height="18" rx="3"/><path d="m10.500 9.500 4 2.500-4 2.500Z"/>',
     filter: '<path d="M4 5h16l-6 7.500V19l-4-2v-4.500L4 5Z"/>',
+    heart: '<path d="M12 19.500s-7-4.300-7-9.300A3.900 3.900 0 0 1 12 8a3.900 3.900 0 0 1 7 2.200c0 5-7 9.300-7 9.300Z"/>',
+    comment: '<path d="M5 18.500v-12A2.500 2.500 0 0 1 7.500 4h9A2.500 2.500 0 0 1 19 6.500v7a2.500 2.500 0 0 1-2.500 2.500H9l-4 2.500Z"/>',
     up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
     image: '<rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.500"/><path d="m20 16-5-5-8 8"/>',
     telegram: '<path d="M20.500 4.500 3.500 11l5 2 2 6 3-4 4.500 3.500 2.500-14Z"/><path d="m8.500 13 9-6.500"/>',
@@ -286,6 +288,7 @@
           closeModal();
           renderChrome();
           toast(t('verify.done'));
+          refreshCommentForms();
           const then = state.afterLogin;
           state.afterLogin = null;
           if (then) then(); else route();
@@ -330,6 +333,7 @@
           <h3>${esc(item.title)}</h3>
           <div class="card-price">${esc(priceLabel(item))}</div>
           <div class="card-meta">${icon('pin')}<span>${esc(item.city)}, ${esc(t('country.' + item.country))}</span><span class="dot">·</span><span>${esc(fmtRelative(item.created_at))}</span></div>
+          ${socialCounts(item)}
           ${extra || ''}
         </div>
       </a>`;
@@ -499,7 +503,7 @@
           <h3>${esc(item.title)}</h3>
           ${item.excerpt ? `<p class="row-excerpt">${esc(item.excerpt)}</p>` : ''}
           <div class="row-foot"><b class="card-price">${esc(priceLabel(item))}</b>
-            <span class="card-meta">${icon('pin')}<span>${esc(item.city)}</span><span class="dot">·</span><span>${esc(fmtRelative(item.created_at))}</span></span></div>
+            <span class="card-meta">${icon('pin')}<span>${esc(item.city)}</span><span class="dot">·</span><span>${esc(fmtRelative(item.created_at))}</span></span>${socialCounts(item)}</div>
         </div>
       </a>`;
   }
@@ -518,6 +522,124 @@
     if (view === 'list') return `<div class="rows">${items.map(rowCard).join('')}</div>`;
     if (view === 'compact') return `<div class="lines">${items.map(lineCard).join('')}</div>`;
     return `<div class="grid">${items.map((i) => card(i)).join('')}</div>`;
+  }
+
+  // ---------- Лайки та коментарі (лише для зареєстрованих) ----------
+
+  function socialCounts(item) {
+    if (item.likes === undefined) return '';
+    return `<span class="social-counts"><span class="${item.liked ? 'liked' : ''}" data-like-view="${item.id}">${icon('heart')}<span class="n">${item.likes}</span></span>`
+      + `<span>${icon('comment')}<span class="n" data-comments-count="${item.id}">${item.comments}</span></span></span>`;
+  }
+
+  function likeButton(r, cls) {
+    return `<button class="${cls} ${r.liked ? 'liked' : ''}" data-like="${r.id}" aria-pressed="${!!r.liked}" aria-label="${esc(t('like.label'))}">${icon('heart')}<span class="n">${r.likes || 0}</span></button>`;
+  }
+
+  function toggleLike(id) {
+    requireLogin(async () => {
+      try {
+        const res = await api(`/requests/${id}/like`, 'POST');
+        $$(`[data-like="${id}"], [data-like-view="${id}"]`).forEach((el) => {
+          el.classList.toggle('liked', res.liked);
+          if (el.hasAttribute('aria-pressed')) el.setAttribute('aria-pressed', res.liked);
+          el.querySelector('.n').textContent = res.likes;
+        });
+        if (feed && feed.details[id] && typeof feed.details[id] === 'object') Object.assign(feed.details[id], { liked: res.liked, likes: res.likes });
+        const item = feed && feed.items.find((i) => i.id === id);
+        if (item) Object.assign(item, { liked: res.liked, likes: res.likes });
+      } catch (err) { toastError(err); }
+    });
+  }
+
+  function setCommentsCount(id, count) {
+    $$(`[data-comments-count="${id}"]`).forEach((el) => { el.textContent = count; });
+    const item = feed && feed.items.find((i) => i.id === id);
+    if (item) item.comments = count;
+    if (feed && feed.details[id] && typeof feed.details[id] === 'object') feed.details[id].comments = count;
+  }
+
+  function commentsBox(id) {
+    return `<div class="comments" data-comments-box="${id}"><div class="comment-list">${loading()}</div><div class="comment-form-slot"></div></div>`;
+  }
+
+  async function mountComments(box, id) {
+    const list = $('.comment-list', box);
+    const slot = $('.comment-form-slot', box);
+    const load = async () => {
+      try {
+        const data = await api(`/requests/${id}/comments`);
+        setCommentsCount(id, data.count);
+        list.innerHTML = data.items.length ? data.items.map((c) => `
+          <div class="comment">
+            ${avatar(c)}
+            <div class="comment-body">
+              <div class="comment-head"><b>${esc(c.name)}</b>${c.is_author ? `<span class="comment-tag">${esc(t('comments.author'))}</span>` : ''}<span class="muted small">${esc(fmtRelative(c.created_at))}</span>
+                ${c.can_delete ? `<button class="comment-del" data-del="${c.id}" aria-label="${esc(t('comments.delete'))}" title="${esc(t('comments.delete'))}">${icon('close')}</button>` : ''}</div>
+              <p class="pre">${esc(c.text)}</p>
+            </div>
+          </div>`).join('') : `<p class="muted comment-empty">${esc(t('comments.empty'))}</p>`;
+        $$('[data-del]', list).forEach((btn) => btn.addEventListener('click', async () => {
+          try {
+            const res = await api('/comments/' + btn.dataset.del, 'DELETE');
+            setCommentsCount(id, res.count);
+            load();
+          } catch (err) { toastError(err); }
+        }));
+      } catch (err) { list.innerHTML = `<p class="muted">${esc(t('err.server'))}</p>`; }
+    };
+    const renderForm = () => {
+      if (state.user && state.user.verified) {
+        slot.innerHTML = `
+          <form class="comment-form">
+            <textarea name="text" rows="2" required maxlength="500" placeholder="${esc(t('comments.placeholder'))}"></textarea>
+            <button class="btn btn-primary">${esc(t('comments.send'))}</button>
+          </form>`;
+        const form = $('form', slot);
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const text = form.text.value.trim();
+          if (!text) return;
+          if (PHONE_RE.test(text)) return toast(t('err.phone'), 'error');
+          const btn = $('button', form);
+          btn.disabled = true;
+          try {
+            const res = await api(`/requests/${id}/comments`, 'POST', { text });
+            form.text.value = '';
+            setCommentsCount(id, res.count);
+            await load();
+            list.scrollTop = list.scrollHeight;
+          } catch (err) { toastError(err); }
+          btn.disabled = false;
+        });
+      } else {
+        slot.innerHTML = `<button class="btn btn-ghost btn-block">${icon('telegram')}<span>${esc(t('comments.login'))}</span></button>`;
+        $('button', slot).addEventListener('click', () => requireLogin(() => { renderForm(); load(); }));
+      }
+    };
+    // Після входу/підтвердження номера форма коментаря з'являється без перезавантаження сторінки.
+    box.refreshForm = renderForm;
+    renderForm();
+    await load();
+  }
+
+  function refreshCommentForms() {
+    $$('[data-comments-box]').forEach((box) => { if (box.refreshForm) box.refreshForm(); });
+  }
+
+  function openCommentsSheet(id) {
+    $('#modal-root').innerHTML = `
+      <div class="modal-backdrop sheet-backdrop" id="modal-backdrop">
+        <div class="modal sheet comments-sheet" role="dialog" aria-modal="true" aria-labelledby="comments-title">
+          <button type="button" class="icon-btn modal-close" id="modal-close" aria-label="${esc(t('login.close'))}">${icon('close')}</button>
+          <h2 id="comments-title">${esc(t('comments.title'))} (<span data-comments-count="${id}">…</span>)</h2>
+          <p class="muted small">${esc(t('comments.public'))}</p>
+          ${commentsBox(id)}
+        </div>
+      </div>`;
+    $('#modal-close').addEventListener('click', closeModal);
+    $('#modal-backdrop').addEventListener('mousedown', (e) => { if (e.target.id === 'modal-backdrop') closeModal(); });
+    mountComments($('[data-comments-box]'), id);
   }
 
   // ---------- Стрічка на мобільному: запити гортаються вертикально, як відео ----------
@@ -549,7 +671,11 @@
       actions = `<div class="slide-actions">${main}${contact}</div>`;
     }
     return `
-      <div class="slide-media">${media}<span class="badge">${esc(t(`sub.${r.cat}.${r.sub}`))}</span></div>
+      <div class="slide-media">${media}<span class="badge">${esc(t(`sub.${r.cat}.${r.sub}`))}</span>
+        ${r.likes !== undefined ? `<div class="slide-rail">
+          ${likeButton(r, 'rail-btn')}
+          <button class="rail-btn" data-act="comments" aria-label="${esc(t('comments.title'))}">${icon('comment')}<span class="n" data-comments-count="${r.id}">${r.comments}</span></button>
+        </div>` : ''}</div>
       <div class="slide-info">
         <div class="slide-price">${esc(priceLabel(r))}</div>
         <h2>${esc(r.title)}</h2>
@@ -671,11 +797,14 @@
     }
     $('#feed-back').addEventListener('click', () => { location.hash = feed.returnHash; });
     scroller.addEventListener('click', (e) => {
+      const likeBtn = e.target.closest('[data-like]');
+      if (likeBtn) return toggleLike(Number(likeBtn.dataset.like));
       const btn = e.target.closest('[data-act]');
       if (!btn) return;
       const slideId = Number(btn.closest('.slide').dataset.id);
       if (btn.dataset.act === 'contact') requireLogin(() => refreshSlide(slideId));
       if (btn.dataset.act === 'offer') requireLogin(() => openOfferSheet(slideId));
+      if (btn.dataset.act === 'comments') openCommentsSheet(slideId);
     });
   }
 
@@ -790,6 +919,11 @@
             <p class="pre">${esc(r.description)}</p>
           </section>
           ${respond}
+          <section class="panel" id="comments-panel">
+            <h2>${esc(t('comments.title'))} (<span data-comments-count="${r.id}">${r.comments}</span>)</h2>
+            <p class="muted small">${esc(t('comments.public'))}</p>
+            ${commentsBox(r.id)}
+          </section>
         </div>
         <aside class="detail-side">
           <div class="panel">
@@ -798,6 +932,10 @@
             <div class="detail-price">${esc(priceLabel(r))}</div>
             <div class="card-meta">${icon('pin')}<span>${esc(r.city)}, ${esc(t('country.' + r.country))}</span></div>
             <div class="muted small">${esc(t('detail.posted', { date: fmtDate(r.created_at) }))}</div>
+            <div class="reactions">
+              ${likeButton(r, 'react')}
+              <button class="react" id="to-comments">${icon('comment')}<span class="n" data-comments-count="${r.id}">${r.comments}</span></button>
+            </div>
           </div>
           <div class="panel">
             <div class="author">${avatar(r.author, 'avatar-lg')}<div><b>${esc(r.author.name)}</b><div class="muted small">${esc(t('detail.since', { date: fmtDate(r.author.since) }))}</div></div></div>
@@ -817,6 +955,9 @@
       $('#gallery-main').src = btn.dataset.photo;
       $$('.thumbs button').forEach((b) => b.classList.toggle('on', b === btn));
     }));
+    mountComments($('[data-comments-box]'), r.id);
+    $('[data-like]', app).addEventListener('click', () => toggleLike(r.id));
+    $('#to-comments').addEventListener('click', () => $('#comments-panel').scrollIntoView({ behavior: 'smooth', block: 'start' }));
     const contactLogin = $('#contact-login');
     if (contactLogin) contactLogin.addEventListener('click', () => requireLogin(() => viewDetail(id)));
 

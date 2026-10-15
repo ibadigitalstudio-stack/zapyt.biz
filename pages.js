@@ -23,7 +23,7 @@ const PAGES = {
           <li>щоб надсилати сповіщення про нові пропозиції в Telegram, якщо ви запустили нашого бота.</li>
         </ul>
         <h2>4. Що бачать інші користувачі</h2>
-        <p>У запиті видно ваше ім’я, фото профілю та текст запиту. Ваш нік у Telegram бачать лише зареєстровані користувачі з підтвердженим номером. Автор запиту бачить вашу пропозицію і ваш нік. Номер телефону не бачить ніхто з користувачів.</p>
+        <p>У запиті видно ваше ім’я, фото профілю та текст запиту. Ваш нік у Telegram бачать лише зареєстровані користувачі з підтвердженим номером. Автор запиту бачить вашу пропозицію і ваш нік. Ваші коментарі разом з ім’ям і фото профілю бачать усі відвідувачі. Номер телефону не бачить ніхто з користувачів.</p>
         <h2>5. Кому ми передаємо дані</h2>
         <p>Ми не продаємо персональні дані. Вони передаються лише сервісам, без яких платформа не працює: Telegram (вхід і сповіщення), оператору SMS-розсилки (надсилання коду) та хостинг-провайдеру (зберігання даних).</p>
         <h2>6. Скільки зберігаються дані</h2>
@@ -62,7 +62,7 @@ const PAGES = {
           <li>у розділі «Благодійність» — вимагати оплату за допомогу, запропоновану безкоштовно.</li>
         </ul>
         <h2>6. Пропозиції на запити</h2>
-        <p>На один запит можна надіслати одну пропозицію. Пропозицію бачить тільки автор запиту. Подальше спілкування відбувається в Telegram.</p>
+        <p>На один запит можна надіслати одну пропозицію. Пропозицію бачить тільки автор запиту. Лайкати запити й залишати коментарі можуть лише зареєстровані користувачі; коментарі бачать усі відвідувачі, тому в них теж не можна вказувати номери телефонів. Подальше спілкування відбувається в Telegram.</p>
         <h2>7. Платні пакети</h2>
         <p>Базове розміщення запитів безкоштовне. Умови платних пакетів описані на сторінці <a href="#/pricing">«Тарифи»</a>.</p>
         <h2>8. Модерація</h2>
@@ -96,7 +96,7 @@ const PAGES = {
           <li>aby wysyłać powiadomienia o nowych ofertach na Telegramie, jeśli uruchomisz naszego bota.</li>
         </ul>
         <h2>4. Co widzą inni użytkownicy</h2>
-        <p>W zapytaniu widać Twoje imię, zdjęcie profilowe i treść zapytania. Twój nick na Telegramie widzą tylko zarejestrowani użytkownicy z potwierdzonym numerem. Autor zapytania widzi Twoją ofertę i Twój nick. Numeru telefonu nie widzi żaden użytkownik.</p>
+        <p>W zapytaniu widać Twoje imię, zdjęcie profilowe i treść zapytania. Twój nick na Telegramie widzą tylko zarejestrowani użytkownicy z potwierdzonym numerem. Autor zapytania widzi Twoją ofertę i Twój nick. Twoje komentarze wraz z imieniem i zdjęciem profilowym widzą wszyscy odwiedzający. Numeru telefonu nie widzi żaden użytkownik.</p>
         <h2>5. Komu przekazujemy dane</h2>
         <p>Nie sprzedajemy danych osobowych. Trafiają one tylko do usług, bez których platforma nie działa: Telegram (logowanie i powiadomienia), operator wysyłki SMS (wysłanie kodu) oraz dostawca hostingu (przechowywanie danych).</p>
         <h2>6. Jak długo przechowujemy dane</h2>
@@ -135,7 +135,7 @@ const PAGES = {
           <li>w dziale „Dobroczynność” — żądać zapłaty za pomoc zaoferowaną bezpłatnie.</li>
         </ul>
         <h2>6. Oferty na zapytania</h2>
-        <p>Na jedno zapytanie można wysłać jedną ofertę. Ofertę widzi tylko autor zapytania. Dalsza rozmowa odbywa się na Telegramie.</p>
+        <p>Na jedno zapytanie można wysłać jedną ofertę. Ofertę widzi tylko autor zapytania. Polubienia i komentarze mogą dodawać tylko zarejestrowani użytkownicy; komentarze widzą wszyscy odwiedzający, dlatego w nich również nie wolno podawać numerów telefonów. Dalsza rozmowa odbywa się na Telegramie.</p>
         <h2>7. Płatne pakiety</h2>
         <p>Podstawowe dodawanie zapytań jest bezpłatne. Warunki płatnych pakietów opisuje strona <a href="#/pricing">„Cennik”</a>.</p>
         <h2>8. Moderacja</h2>
