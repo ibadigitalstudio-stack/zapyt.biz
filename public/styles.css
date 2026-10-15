@@ -398,6 +398,16 @@ body.feed-open { overflow: hidden; }
 .feed-hint { position: absolute; left: 50%; bottom: 120px; z-index: 3; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; width: max-content; max-width: calc(100% - 32px); padding: 10px 16px; border-radius: 999px; background: rgba(0, 0, 0, .75); color: #fff; font-size: 14px; font-weight: 600; pointer-events: none; animation: bob 1.2s ease-in-out infinite; }
 @keyframes bob { 50% { transform: translate(-50%, -6px); } }
 
+.feed.list-mode .feed-top { flex-wrap: wrap; row-gap: 8px; padding-bottom: 18px; background: linear-gradient(rgba(0, 0, 0, .6), transparent); }
+.feed.list-mode .feed-logo { margin-left: auto; }
+.feed-cats { flex: 0 0 100%; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.feed-cats::-webkit-scrollbar { display: none; }
+.feed-cats a { flex: none; padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, .35); color: #fff; font-size: 13px; font-weight: 700; }
+.feed-cats a.on { background: #fff; color: #0b7d3c; }
+.feed.list-mode .slide-media .badge { top: 112px; }
+.slide-empty { display: grid; place-items: center; padding: 120px 16px 16px; }
+.slide-empty .empty { width: 100%; }
+
 /* Нижня панель для пропозиції */
 .sheet-backdrop { place-items: end center; padding: 0; }
 .sheet { max-width: 640px; border-radius: 22px 22px 0 0; text-align: left; padding-bottom: calc(26px + env(safe-area-inset-bottom)); }

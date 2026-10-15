@@ -1,6 +1,9 @@
 // Тексти інтерфейсу: українська та польська.
 const I18N = {
   uk: {
+    'view.feed': 'Стрічка',
+    'feed.all': 'Усі',
+    'feed.filters': 'Фільтри та формат',
     'view.label': 'Формат відображення',
     'view.grid': 'Плитка',
     'view.list': 'Список',
@@ -240,6 +243,9 @@ const I18N = {
   },
 
   pl: {
+    'view.feed': 'Przewijanie',
+    'feed.all': 'Wszystkie',
+    'feed.filters': 'Filtry i widok',
     'view.label': 'Sposób wyświetlania',
     'view.grid': 'Kafelki',
     'view.list': 'Lista',
