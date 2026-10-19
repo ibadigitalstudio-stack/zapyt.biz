@@ -3,8 +3,8 @@
 const DemoApi = (function () {
   'use strict';
 
-  const KEY = 'zapyt-demo-v3';
-  const CATS = {auto: ['buy_car', 'parts', 'repair', 'tires', 'moto', 'truck', 'rent_car', 'transport'], realty: ['buy', 'rent', 'buy_house', 'room', 'daily', 'commercial', 'land', 'garage', 'renovation'], charity: ['need', 'clothes', 'kids', 'furniture', 'food', 'medicine', 'housing', 'animals', 'volunteers'], jobs: ['job', 'worker', 'parttime', 'remote', 'master', 'nanny', 'tutor', 'driver'], dating: ['partner', 'friends', 'hobby', 'travel', 'sport', 'chat']};
+  const KEY = 'zapyt-demo-v4';
+  const CATS = {auto: ['buy_car', 'sell_car', 'parts', 'sell_parts', 'rent_car', 'transport', 'repair', 'tires', 'moto', 'truck'], realty: ['buy', 'sell', 'rent', 'buy_house', 'sell_house', 'rent_house', 'room', 'daily', 'commercial', 'land', 'sell_land', 'garage', 'renovation'], charity: ['need', 'offer', 'give_free', 'animals', 'housing', 'medicine', 'clothes', 'kids', 'furniture', 'food', 'volunteers'], jobs: ['job', 'worker', 'remote', 'master', 'parttime', 'nanny', 'tutor', 'driver'], dating: ['girl', 'guy', 'friends', 'chat', 'casual', 'partner', 'hobby', 'travel', 'sport']};
   const NO_PRICE = ['charity', 'dating'];
   const PHONE_RE = /(?:\+?\d[\s\-().]{0,2}){9,}/;
   const USERNAME_RE = /^[A-Za-z][A-Za-z0-9_]{4,31}$/;
@@ -31,8 +31,8 @@ const DemoApi = (function () {
       [2, "charity", "furniture", "Potrzebuję łóżka i szafy do pokoju", "Urządzam pokój dla mamy po przeprowadzce. Chętnie przyjmę używane meble, odbiorę sam w weekend.", "PL", "Poznań", null, null, {}],
       [2, "jobs", "worker", "Szukam magazyniera od zaraz, umowa o pracę", "Praca dwuzmianowa, szkolenie na wózki widłowe na nasz koszt, pomoc w zakwaterowaniu. Odpowiedz, jeśli szukasz stałej pracy.", "PL", "Łódź", 5200, "PLN", {}],
       [3, "jobs", "job", "Шукаю роботу електриком, досвід 8 років", "Монтаж проводки, щитків, освітлення. Маю допуски та власний інструмент. Розгляну пропозиції в Україні та Польщі.", "UA", "Тернопіль", 35000, "UAH", {}],
-      [1, "dating", "partner", "Шукаю людину для серйозних стосунків", "Люблю гори, книжки та довгі прогулянки містом. Працюю дизайнеркою. Напишіть, якщо вам теж цікаво.", "UA", "Львів", null, null, {"age": 29, "gender": "f"}],
-      [2, "dating", "partner", "Poznam kogoś do wspólnych wypadów rowerowych", "Lubię rower, kino i dobrą kawę. Szukam osoby z poczuciem humoru, która nie boi się długich tras.", "PL", "Gdańsk", null, null, {"age": 34, "gender": "m"}],
+      [1, "dating", "guy", "Шукаю людину для серйозних стосунків", "Люблю гори, книжки та довгі прогулянки містом. Працюю дизайнеркою. Напишіть, якщо вам теж цікаво.", "UA", "Львів", null, null, {"age": 29, "gender": "f"}],
+      [2, "dating", "sport", "Poznam kogoś do wspólnych wypadów rowerowych", "Lubię rower, kino i dobrą kawę. Szukam osoby z poczuciem humoru, która nie boi się długich tras.", "PL", "Gdańsk", null, null, {"age": 34, "gender": "m"}],
     ];
     // Порядок перемішано, щоб на головній одразу було видно різні категорії.
     const order = [0, 6, 3, 8, 10, 1, 4, 7, 9, 2, 11, 5];

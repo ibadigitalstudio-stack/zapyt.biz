@@ -3,11 +3,11 @@
   'use strict';
 
   const CATS = {
-    auto: ['buy_car', 'parts', 'repair', 'tires', 'moto', 'truck', 'rent_car', 'transport'],
-    realty: ['buy', 'rent', 'buy_house', 'room', 'daily', 'commercial', 'land', 'garage', 'renovation'],
-    charity: ['need', 'clothes', 'kids', 'furniture', 'food', 'medicine', 'housing', 'animals', 'volunteers'],
-    jobs: ['job', 'worker', 'parttime', 'remote', 'master', 'nanny', 'tutor', 'driver'],
-    dating: ['partner', 'friends', 'hobby', 'travel', 'sport', 'chat'],
+    auto: ['buy_car', 'sell_car', 'parts', 'sell_parts', 'rent_car', 'transport', 'repair', 'tires', 'moto', 'truck'],
+    realty: ['buy', 'sell', 'rent', 'buy_house', 'sell_house', 'rent_house', 'room', 'daily', 'commercial', 'land', 'sell_land', 'garage', 'renovation'],
+    charity: ['need', 'offer', 'give_free', 'animals', 'housing', 'medicine', 'clothes', 'kids', 'furniture', 'food', 'volunteers'],
+    jobs: ['job', 'worker', 'remote', 'master', 'parttime', 'nanny', 'tutor', 'driver'],
+    dating: ['girl', 'guy', 'friends', 'chat', 'casual', 'partner', 'hobby', 'travel', 'sport'],
   };
   const NO_PRICE = ['charity', 'dating'];
   const HOME_SUBS = 3; // скільки підкатегорій видно на картці категорії на головній
@@ -79,7 +79,7 @@
   }
 
   function priceLabel(item) {
-    if (item.cat === 'charity') return t('price.free');
+    if (item.cat === 'charity') return t(['offer', 'give_free'].includes(item.sub) ? 'price.giveFree' : 'price.free');
     if (item.cat === 'dating') {
       return item.attrs && item.attrs.age ? `${t('gender.' + item.attrs.gender)}, ${t('dating.age', { n: item.attrs.age })}` : '';
     }

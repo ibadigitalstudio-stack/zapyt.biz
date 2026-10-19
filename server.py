@@ -64,11 +64,11 @@ SMS_PER_HOUR = 5
 SMS_MAX_ATTEMPTS = 5
 
 CATEGORIES = {
-    "auto": ["buy_car", "parts", "repair", "tires", "moto", "truck", "rent_car", "transport"],
-    "realty": ["buy", "rent", "buy_house", "room", "daily", "commercial", "land", "garage", "renovation"],
-    "charity": ["need", "clothes", "kids", "furniture", "food", "medicine", "housing", "animals", "volunteers"],
-    "jobs": ["job", "worker", "parttime", "remote", "master", "nanny", "tutor", "driver"],
-    "dating": ["partner", "friends", "hobby", "travel", "sport", "chat"],
+    "auto": ["buy_car", "sell_car", "parts", "sell_parts", "rent_car", "transport", "repair", "tires", "moto", "truck"],
+    "realty": ["buy", "sell", "rent", "buy_house", "sell_house", "rent_house", "room", "daily", "commercial", "land", "sell_land", "garage", "renovation"],
+    "charity": ["need", "offer", "give_free", "animals", "housing", "medicine", "clothes", "kids", "furniture", "food", "volunteers"],
+    "jobs": ["job", "worker", "remote", "master", "parttime", "nanny", "tutor", "driver"],
+    "dating": ["girl", "guy", "friends", "chat", "casual", "partner", "hobby", "travel", "sport"],
 }
 NO_PRICE_CATS = {"charity", "dating"}
 CURRENCIES = {"UAH", "PLN", "USD", "EUR"}
@@ -888,13 +888,13 @@ def seed():
         ('olena_demo', 'charity', 'kids', 'Потрібні теплі речі для дитини 2 років', 'Ми переселенці, шукаємо теплий одяг на зиму та взуття 24 розміру для хлопчика. Будемо вдячні за будь-яку допомогу.', 'PL', 'Warszawa', None, None, {}),
         ('kasia_demo', 'realty', 'rent', 'Szukam mieszkania 2-pokojowego do wynajęcia', 'Para bez zwierząt, oboje pracujemy. Interesuje nas Mokotów lub Ochota, blisko metra, od listopada na dłużej.', 'PL', 'Warszawa', 3800, 'PLN', {}),
         ('marek_demo', 'jobs', 'worker', 'Szukam magazyniera od zaraz, umowa o pracę', 'Praca dwuzmianowa, szkolenie na wózki widłowe na nasz koszt, pomoc w zakwaterowaniu. Odpowiedz, jeśli szukasz stałej pracy.', 'PL', 'Łódź', 5200, 'PLN', {}),
-        ('olena_demo', 'dating', 'partner', 'Шукаю людину для серйозних стосунків', 'Люблю гори, книжки та довгі прогулянки містом. Працюю дизайнеркою. Напишіть, якщо вам теж цікаво.', 'UA', 'Львів', None, None, {'age': 29, 'gender': 'f'}),
+        ('olena_demo', 'dating', 'guy', 'Шукаю людину для серйозних стосунків', 'Люблю гори, книжки та довгі прогулянки містом. Працюю дизайнеркою. Напишіть, якщо вам теж цікаво.', 'UA', 'Львів', None, None, {'age': 29, 'gender': 'f'}),
         ('marek_demo', 'auto', 'parts', 'Szukam zderzaka przedniego do Skody Octavii III', 'Potrzebny zderzak przedni w kolorze srebrnym, rocznik 2016, wersja przed liftem. Może być używany, bez pęknięć.', 'PL', 'Kraków', 600, 'PLN', {}),
         ('olena_demo', 'realty', 'buy', 'Куплю 1-кімнатну квартиру в новобудові', 'Розглядаю новобудови з ремонтом або під ремонт, до 45 м², не вище 10 поверху. Без посередників, готова до швидкої угоди.', 'UA', 'Київ', 60000, 'USD', {}),
         ('marek_demo', 'charity', 'furniture', 'Potrzebuję łóżka i szafy do pokoju', 'Urządzam pokój dla mamy po przeprowadzce. Chętnie przyjmę używane meble, odbiorę sam w weekend.', 'PL', 'Poznań', None, None, {}),
         ('taras_demo', 'jobs', 'job', 'Шукаю роботу електриком, досвід 8 років', 'Монтаж проводки, щитків, освітлення. Маю допуски та власний інструмент. Розгляну пропозиції в Україні та Польщі.', 'UA', 'Тернопіль', 35000, 'UAH', {}),
         ('olena_demo', 'auto', 'repair', 'Потрібен ремонт кондиціонера в авто', 'Не холодить кондиціонер у Hyundai Tucson 2017. Потрібна діагностика й заправка, бажано з гарантією. Можу приїхати в будній день.', 'UA', 'Львів', 3000, 'UAH', {}),
-        ('marek_demo', 'dating', 'partner', 'Poznam kogoś do wspólnych wypadów rowerowych', 'Lubię rower, kino i dobrą kawę. Szukam osoby z poczuciem humoru, która nie boi się długich tras.', 'PL', 'Gdańsk', None, None, {'age': 34, 'gender': 'm'}),
+        ('marek_demo', 'dating', 'sport', 'Poznam kogoś do wspólnych wypadów rowerowych', 'Lubię rower, kino i dobrą kawę. Szukam osoby z poczuciem humoru, która nie boi się długich tras.', 'PL', 'Gdańsk', None, None, {'age': 34, 'gender': 'm'}),
         ('taras_demo', 'realty', 'garage', 'Орендую гараж або паркомісце біля центру', 'Потрібне місце для легкового авто на тривалий термін, бажано під охороною. Розгляну варіанти в радіусі 2 км від центру.', 'UA', 'Тернопіль', 1500, 'UAH', {}),
     ]
     for i, (username, cat, sub, title, description, country, city, price, currency, attrs) in enumerate(demo):
