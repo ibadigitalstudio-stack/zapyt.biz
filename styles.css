@@ -151,6 +151,9 @@ main.container { flex: 1; padding-top: 24px; padding-bottom: 56px; }
 .cat-icon .icon { width: 24px; height: 24px; }
 .cat-subs { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; font-size: 14px; color: var(--muted); }
 .cat-subs a:hover { color: var(--green-text); }
+.more-btn { margin-top: 10px; padding: 0; border: 0; background: none; color: var(--green-text); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.more-btn:hover { text-decoration: underline; }
+.chip-more { border-style: dashed; color: var(--green-text); background: none; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
 
 /* Картки */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }

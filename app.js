@@ -3,13 +3,15 @@
   'use strict';
 
   const CATS = {
-    auto: ['buy_car', 'parts', 'repair'],
-    realty: ['buy', 'rent'],
-    charity: ['need'],
-    jobs: ['job', 'worker'],
-    dating: ['partner'],
+    auto: ['buy_car', 'parts', 'repair', 'tires', 'moto', 'truck', 'rent_car', 'transport'],
+    realty: ['buy', 'rent', 'buy_house', 'room', 'daily', 'commercial', 'land', 'garage', 'renovation'],
+    charity: ['need', 'clothes', 'kids', 'furniture', 'food', 'medicine', 'housing', 'animals', 'volunteers'],
+    jobs: ['job', 'worker', 'parttime', 'remote', 'master', 'nanny', 'tutor', 'driver'],
+    dating: ['partner', 'friends', 'hobby', 'travel', 'sport', 'chat'],
   };
   const NO_PRICE = ['charity', 'dating'];
+  const HOME_SUBS = 3; // скільки підкатегорій видно на картці категорії на головній
+  const LIST_SUBS = 5; // скільки підкатегорій видно в каталозі до кнопки «Переглянути більше»
   const CURRENCIES = ['UAH', 'PLN', 'USD', 'EUR'];
   const PHONE_RE = /(?:\+?\d[\s\-().]{0,2}){9,}/;
 
@@ -374,7 +376,8 @@
           ${Object.keys(CATS).map((cat) => `
             <div class="cat-card">
               <a class="cat-head" href="${listHash({ cat })}"><span class="cat-icon">${icon(cat)}</span><b>${esc(t('cat.' + cat))}</b></a>
-              <div class="cat-subs">${CATS[cat].map((sub) => `<a href="${listHash({ cat, sub })}">${esc(t(`sub.${cat}.${sub}`))}</a>`).join('')}</div>
+              <div class="cat-subs">${CATS[cat].map((sub, i) => `<a href="${listHash({ cat, sub })}" ${i >= HOME_SUBS ? 'class="sub-extra" hidden' : ''}>${esc(t(`sub.${cat}.${sub}`))}</a>`).join('')}</div>
+              ${CATS[cat].length > HOME_SUBS ? `<button class="more-btn" data-more aria-expanded="false" data-count="${CATS[cat].length - HOME_SUBS}">${esc(t('subs.more', { n: CATS[cat].length - HOME_SUBS }))}</button>` : ''}
             </div>`).join('')}
         </div>
       </section>
@@ -382,6 +385,12 @@
         <div class="section-head"><h2 class="section-title">${esc(t('home.latest'))}</h2><a class="link" href="#/list">${esc(t('home.all'))} →</a></div>
         <div id="latest">${loading()}</div>
       </section>`;
+    $$('[data-more]').forEach((btn) => btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      $$('.sub-extra', btn.closest('.cat-card')).forEach((a) => { a.hidden = !open; });
+      btn.setAttribute('aria-expanded', open);
+      btn.textContent = open ? t('subs.less') : t('subs.more', { n: btn.dataset.count });
+    }));
     $('#home-search').addEventListener('submit', (e) => {
       e.preventDefault();
       location.hash = listHash({ q: e.target.q.value.trim() });
@@ -406,6 +415,7 @@
     };
     if (!f.cat || !CATS[f.cat].includes(f.sub)) f.sub = '';
     const showPrice = !NO_PRICE.includes(f.cat);
+    const subsOpen = !!f.cat && CATS[f.cat].indexOf(f.sub) >= LIST_SUBS;
     const go = (patch) => { location.hash = listHash(Object.assign({}, f, { page: '' }, patch)); };
 
     app.innerHTML = `
@@ -421,7 +431,8 @@
       ${f.cat && CATS[f.cat].length > 1 ? `
         <div class="chips">
           <a class="chip ${f.sub ? '' : 'on'}" href="${listHash(Object.assign({}, f, { sub: '', page: '' }))}">${esc(t('sub.all'))}</a>
-          ${CATS[f.cat].map((sub) => `<a class="chip ${f.sub === sub ? 'on' : ''}" href="${listHash(Object.assign({}, f, { sub, page: '' }))}">${esc(t(`sub.${f.cat}.${sub}`))}</a>`).join('')}
+          ${CATS[f.cat].map((sub, i) => `<a class="chip ${f.sub === sub ? 'on' : ''} ${i >= LIST_SUBS ? 'sub-extra' : ''}" ${i >= LIST_SUBS && !subsOpen ? 'hidden' : ''} href="${listHash(Object.assign({}, f, { sub, page: '' }))}">${esc(t(`sub.${f.cat}.${sub}`))}</a>`).join('')}
+          ${CATS[f.cat].length > LIST_SUBS ? `<button class="chip chip-more" id="chips-more" aria-expanded="${subsOpen}">${esc(subsOpen ? t('subs.less') : t('subs.more', { n: CATS[f.cat].length - LIST_SUBS }))}</button>` : ''}
         </div>` : ''}
       <form class="filters" id="filters">
         <label class="field"><span>${esc(t('filter.country'))}</span>
@@ -439,6 +450,13 @@
       </form>
       <div id="results">${loading()}</div>`;
 
+    const chipsMore = $('#chips-more');
+    if (chipsMore) chipsMore.addEventListener('click', () => {
+      const open = chipsMore.getAttribute('aria-expanded') !== 'true';
+      $$('.chips .sub-extra').forEach((a) => { a.hidden = !open; });
+      chipsMore.setAttribute('aria-expanded', open);
+      chipsMore.textContent = open ? t('subs.less') : t('subs.more', { n: CATS[f.cat].length - LIST_SUBS });
+    });
     $('#list-search').addEventListener('submit', (e) => { e.preventDefault(); go({ q: e.target.q.value.trim() }); });
     const filters = $('#filters');
     const applyFilters = () => {

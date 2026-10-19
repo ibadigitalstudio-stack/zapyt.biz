@@ -48,7 +48,7 @@ const PAGES = {
           <li>Одна людина — один акаунт. Один номер телефону можна прив’язати лише до одного акаунта.</li>
         </ul>
         <h2>3. Дозволені категорії</h2>
-        <p>Користувачі публікують запити про те, що вони шукають, а інші користувачі надсилають на них свої пропозиції. Запити приймаються лише в категоріях: Авто (куплю авто, шукаю запчастини, потрібен ремонт), Нерухомість (куплю, орендую), Благодійність (потрібна допомога), Робота (шукаю роботу, шукаю працівника), Знайомства (шукаю пару).</p>
+        <p>Користувачі публікують запити про те, що вони шукають, а інші користувачі надсилають на них свої пропозиції. Запити приймаються лише в п’яти категоріях — Авто, Нерухомість, Благодійність, Робота, Знайомства — та в їхніх підкатегоріях, перелік яких наведено на <a href="#/sitemap">карті сайту</a>.</p>
         <h2>4. Контакти</h2>
         <p>Єдиний спосіб зв’язку між користувачами — Telegram. Вказувати номери телефонів у заголовку, описі запиту чи в пропозиції заборонено: такі тексти автоматично відхиляються.</p>
         <h2>5. Що заборонено</h2>
@@ -121,7 +121,7 @@ const PAGES = {
           <li>Jedna osoba — jedno konto. Jeden numer telefonu można przypisać tylko do jednego konta.</li>
         </ul>
         <h2>3. Dozwolone kategorie</h2>
-        <p>Użytkownicy publikują zapytania o to, czego szukają, a inni użytkownicy wysyłają im swoje oferty. Zapytania przyjmujemy tylko w kategoriach: Motoryzacja (kupię auto, szukam części, potrzebna naprawa), Nieruchomości (kupię, szukam do wynajęcia), Dobroczynność (potrzebuję pomocy), Praca (szukam pracy, szukam pracownika), Znajomości (szukam drugiej połówki).</p>
+        <p>Użytkownicy publikują zapytania o to, czego szukają, a inni użytkownicy wysyłają im swoje oferty. Zapytania przyjmujemy tylko w pięciu kategoriach — Motoryzacja, Nieruchomości, Dobroczynność, Praca, Znajomości — oraz w ich podkategoriach, których listę zawiera <a href="#/sitemap">mapa strony</a>.</p>
         <h2>4. Kontakt</h2>
         <p>Jedynym sposobem kontaktu między użytkownikami jest Telegram. Podawanie numerów telefonów w tytule, opisie zapytania lub w ofercie jest zabronione: takie treści są automatycznie odrzucane.</p>
         <h2>5. Czego nie wolno</h2>
