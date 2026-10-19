@@ -3,8 +3,8 @@
 const DemoApi = (function () {
   'use strict';
 
-  const KEY = 'zapyt-demo-v2';
-  const CATS = {auto: ['buy_car', 'parts', 'repair'], realty: ['buy', 'rent'], charity: ['need'], jobs: ['job', 'worker'], dating: ['partner']};
+  const KEY = 'zapyt-demo-v3';
+  const CATS = {auto: ['buy_car', 'parts', 'repair', 'tires', 'moto', 'truck', 'rent_car', 'transport'], realty: ['buy', 'rent', 'buy_house', 'room', 'daily', 'commercial', 'land', 'garage', 'renovation'], charity: ['need', 'clothes', 'kids', 'furniture', 'food', 'medicine', 'housing', 'animals', 'volunteers'], jobs: ['job', 'worker', 'parttime', 'remote', 'master', 'nanny', 'tutor', 'driver'], dating: ['partner', 'friends', 'hobby', 'travel', 'sport', 'chat']};
   const NO_PRICE = ['charity', 'dating'];
   const PHONE_RE = /(?:\+?\d[\s\-().]{0,2}){9,}/;
   const USERNAME_RE = /^[A-Za-z][A-Za-z0-9_]{4,31}$/;
@@ -26,9 +26,9 @@ const DemoApi = (function () {
       [1, "auto", "repair", "Потрібен ремонт кондиціонера в авто", "Не холодить кондиціонер у Hyundai Tucson 2017. Потрібна діагностика й заправка, бажано з гарантією. Можу приїхати в будній день.", "UA", "Львів", 3000, "UAH", {}],
       [4, "realty", "rent", "Szukam mieszkania 2-pokojowego do wynajęcia", "Para bez zwierząt, oboje pracujemy. Interesuje nas Mokotów lub Ochota, blisko metra, od listopada na dłużej.", "PL", "Warszawa", 3800, "PLN", {}],
       [1, "realty", "buy", "Куплю 1-кімнатну квартиру в новобудові", "Розглядаю новобудови з ремонтом або під ремонт, до 45 м², не вище 10 поверху. Без посередників, готова до швидкої угоди.", "UA", "Київ", 60000, "USD", {}],
-      [3, "realty", "rent", "Орендую гараж або паркомісце біля центру", "Потрібне місце для легкового авто на тривалий термін, бажано під охороною. Розгляну варіанти в радіусі 2 км від центру.", "UA", "Тернопіль", 1500, "UAH", {}],
-      [1, "charity", "need", "Потрібні теплі речі для дитини 2 років", "Ми переселенці, шукаємо теплий одяг на зиму та взуття 24 розміру для хлопчика. Будемо вдячні за будь-яку допомогу.", "PL", "Warszawa", null, null, {}],
-      [2, "charity", "need", "Potrzebuję łóżka i szafy do pokoju", "Urządzam pokój dla mamy po przeprowadzce. Chętnie przyjmę używane meble, odbiorę sam w weekend.", "PL", "Poznań", null, null, {}],
+      [3, "realty", "garage", "Орендую гараж або паркомісце біля центру", "Потрібне місце для легкового авто на тривалий термін, бажано під охороною. Розгляну варіанти в радіусі 2 км від центру.", "UA", "Тернопіль", 1500, "UAH", {}],
+      [1, "charity", "kids", "Потрібні теплі речі для дитини 2 років", "Ми переселенці, шукаємо теплий одяг на зиму та взуття 24 розміру для хлопчика. Будемо вдячні за будь-яку допомогу.", "PL", "Warszawa", null, null, {}],
+      [2, "charity", "furniture", "Potrzebuję łóżka i szafy do pokoju", "Urządzam pokój dla mamy po przeprowadzce. Chętnie przyjmę używane meble, odbiorę sam w weekend.", "PL", "Poznań", null, null, {}],
       [2, "jobs", "worker", "Szukam magazyniera od zaraz, umowa o pracę", "Praca dwuzmianowa, szkolenie na wózki widłowe na nasz koszt, pomoc w zakwaterowaniu. Odpowiedz, jeśli szukasz stałej pracy.", "PL", "Łódź", 5200, "PLN", {}],
       [3, "jobs", "job", "Шукаю роботу електриком, досвід 8 років", "Монтаж проводки, щитків, освітлення. Маю допуски та власний інструмент. Розгляну пропозиції в Україні та Польщі.", "UA", "Тернопіль", 35000, "UAH", {}],
       [1, "dating", "partner", "Шукаю людину для серйозних стосунків", "Люблю гори, книжки та довгі прогулянки містом. Працюю дизайнеркою. Напишіть, якщо вам теж цікаво.", "UA", "Львів", null, null, {"age": 29, "gender": "f"}],
