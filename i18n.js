@@ -92,7 +92,7 @@ const I18N = {
     'nav.lang': 'Мова',
 
     'hero.title': 'Створи свій запит — реалізуй свою мрію',
-    'hero.text': 'Авто, нерухомість, робота, благодійність і знайомства. Все швидко, просто та конфіденційно.',
+    'hero.text': 'Авто/мото, нерухомість, робота, допомога і знайомства. Все швидко, просто та конфіденційно.',
     'search.placeholder': 'Що шукають люди?',
     'search.button': 'Знайти',
     'home.latest': 'Нові запити',
@@ -100,9 +100,9 @@ const I18N = {
     'home.categories': 'Категорії',
 
     'cat.all': 'Усі категорії',
-    'cat.auto': 'Авто',
+    'cat.auto': 'Авто/мото',
     'cat.realty': 'Нерухомість',
-    'cat.charity': 'Благодійність',
+    'cat.charity': 'Допомога',
     'cat.jobs': 'Робота',
     'cat.dating': 'Знайомства',
     'sub.all': 'Усе',
@@ -389,7 +389,7 @@ const I18N = {
     'nav.lang': 'Język',
 
     'hero.title': 'Stwórz swoje zapytanie — spełnij swoje marzenie',
-    'hero.text': 'Auta, nieruchomości, praca, dobroczynność i znajomości. Wszystko szybko, prosto i poufnie.',
+    'hero.text': 'Auto/moto, nieruchomości, praca, pomoc i znajomości. Wszystko szybko, prosto i poufnie.',
     'search.placeholder': 'Czego szukają ludzie?',
     'search.button': 'Szukaj',
     'home.latest': 'Nowe zapytania',
@@ -397,9 +397,9 @@ const I18N = {
     'home.categories': 'Kategorie',
 
     'cat.all': 'Wszystkie kategorie',
-    'cat.auto': 'Motoryzacja',
+    'cat.auto': 'Auto/moto',
     'cat.realty': 'Nieruchomości',
-    'cat.charity': 'Dobroczynność',
+    'cat.charity': 'Pomoc',
     'cat.jobs': 'Praca',
     'cat.dating': 'Znajomości',
     'sub.all': 'Wszystko',

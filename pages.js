@@ -48,7 +48,7 @@ const PAGES = {
           <li>Одна людина — один акаунт. Один номер телефону можна прив’язати лише до одного акаунта.</li>
         </ul>
         <h2>3. Дозволені категорії</h2>
-        <p>Користувачі публікують запити про те, що вони шукають, а інші користувачі надсилають на них свої пропозиції. Запити приймаються лише в п’яти категоріях — Авто, Нерухомість, Благодійність, Робота, Знайомства — та в їхніх підкатегоріях, перелік яких наведено на <a href="#/sitemap">карті сайту</a>.</p>
+        <p>Користувачі публікують запити про те, що вони шукають, а інші користувачі надсилають на них свої пропозиції. Запити приймаються лише в п’яти категоріях — Авто/мото, Нерухомість, Допомога, Робота, Знайомства — та в їхніх підкатегоріях, перелік яких наведено на <a href="#/sitemap">карті сайту</a>.</p>
         <h2>4. Контакти</h2>
         <p>Єдиний спосіб зв’язку між користувачами — Telegram. Вказувати номери телефонів у заголовку, описі запиту чи в пропозиції заборонено: такі тексти автоматично відхиляються.</p>
         <h2>5. Що заборонено</h2>
@@ -59,7 +59,7 @@ const PAGES = {
           <li>чужі фото й тексти без дозволу власника;</li>
           <li>образи, погрози, дискримінація;</li>
           <li>у розділі «Знайомства» — відверті матеріали, платні інтимні послуги та анкети неповнолітніх;</li>
-          <li>у розділі «Благодійність» — вимагати оплату за допомогу, запропоновану безкоштовно.</li>
+          <li>у розділі «Допомога» — вимагати оплату за допомогу, запропоновану безкоштовно.</li>
         </ul>
         <h2>6. Пропозиції на запити</h2>
         <p>На один запит можна надіслати одну пропозицію. Пропозицію бачить тільки автор запиту. Лайкати запити й залишати коментарі можуть лише зареєстровані користувачі; коментарі бачать усі відвідувачі, тому в них теж не можна вказувати номери телефонів. Подальше спілкування відбувається в Telegram.</p>
@@ -121,7 +121,7 @@ const PAGES = {
           <li>Jedna osoba — jedno konto. Jeden numer telefonu można przypisać tylko do jednego konta.</li>
         </ul>
         <h2>3. Dozwolone kategorie</h2>
-        <p>Użytkownicy publikują zapytania o to, czego szukają, a inni użytkownicy wysyłają im swoje oferty. Zapytania przyjmujemy tylko w pięciu kategoriach — Motoryzacja, Nieruchomości, Dobroczynność, Praca, Znajomości — oraz w ich podkategoriach, których listę zawiera <a href="#/sitemap">mapa strony</a>.</p>
+        <p>Użytkownicy publikują zapytania o to, czego szukają, a inni użytkownicy wysyłają im swoje oferty. Zapytania przyjmujemy tylko w pięciu kategoriach — Auto/moto, Nieruchomości, Pomoc, Praca, Znajomości — oraz w ich podkategoriach, których listę zawiera <a href="#/sitemap">mapa strony</a>.</p>
         <h2>4. Kontakt</h2>
         <p>Jedynym sposobem kontaktu między użytkownikami jest Telegram. Podawanie numerów telefonów w tytule, opisie zapytania lub w ofercie jest zabronione: takie treści są automatycznie odrzucane.</p>
         <h2>5. Czego nie wolno</h2>
@@ -132,7 +132,7 @@ const PAGES = {
           <li>używać cudzych zdjęć i tekstów bez zgody właściciela;</li>
           <li>obrażać, grozić, dyskryminować;</li>
           <li>w dziale „Znajomości” — publikować treści erotycznych, płatnych usług intymnych i profili osób niepełnoletnich;</li>
-          <li>w dziale „Dobroczynność” — żądać zapłaty za pomoc zaoferowaną bezpłatnie.</li>
+          <li>w dziale „Pomoc” — żądać zapłaty za pomoc zaoferowaną bezpłatnie.</li>
         </ul>
         <h2>6. Oferty na zapytania</h2>
         <p>Na jedno zapytanie można wysłać jedną ofertę. Ofertę widzi tylko autor zapytania. Polubienia i komentarze mogą dodawać tylko zarejestrowani użytkownicy; komentarze widzą wszyscy odwiedzający, dlatego w nich również nie wolno podawać numerów telefonów. Dalsza rozmowa odbywa się na Telegramie.</p>
