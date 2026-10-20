@@ -1279,7 +1279,7 @@
     const saved = store.get('lang');
     state.lang = saved === 'uk' || saved === 'pl' ? saved : ((navigator.language || '').toLowerCase().startsWith('pl') ? 'pl' : 'uk');
     // На статичному хостингу (GitHub Pages) сервера немає — вмикаємо демо-режим із даними в браузері.
-    state.demo = /\.github\.io$/.test(location.hostname) || location.protocol === 'file:' || new URLSearchParams(location.search).has('demo');
+    state.demo = window.ZAPYT_STATIC === true || location.protocol === 'file:' || new URLSearchParams(location.search).has('demo');
     renderChrome();
     try {
       const [config, me] = await Promise.all([api('/config'), api('/me')]);

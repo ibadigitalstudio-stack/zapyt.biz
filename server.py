@@ -848,6 +848,16 @@ class Handler(BaseHTTPRequestHandler):
             return self.handle_api(method, path, parsed.query)
         if method != "GET":
             return self.send_error(405)
+        if path == "/mode.js":
+            # Тут працює справжній сервер, тому демо-режим вимкнено.
+            body = b"window.ZAPYT_STATIC = false;\n"
+            self.send_response(200)
+            self.send_header("Content-Type", "application/javascript; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-cache")
+            self.end_headers()
+            self.wfile.write(body)
+            return None
         if path.startswith("/uploads/"):
             name = os.path.basename(path)
             if not PHOTO_RE.match("/uploads/" + name):
