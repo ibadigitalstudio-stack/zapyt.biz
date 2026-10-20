@@ -198,7 +198,8 @@
                 <div class="input-prefix"><i>@</i><input name="username" required minlength="5" maxlength="32" pattern="[A-Za-z][A-Za-z0-9_]{4,31}" autocomplete="off" autocapitalize="off"></div>
               </label>
               <button class="btn btn-primary btn-block">${esc(t('login.submit'))}</button>
-            </form>` : '<div id="tg-widget" class="tg-widget"></div>'}
+            </form>` : state.config.botUsername ? '<div id="tg-widget" class="tg-widget"></div>'
+            : `<div class="notice">${esc(t('login.unavailable'))}</div>`}
         </div>
       </div>`;
     $('#modal-close').addEventListener('click', closeModal);
@@ -211,7 +212,7 @@
         e.preventDefault();
         try { onLoggedIn(await api('/auth/dev', 'POST', { username: form.username.value })); } catch (err) { toastError(err); }
       });
-    } else {
+    } else if (state.config.botUsername) {
       // Офіційний віджет входу Telegram: повертає підписані дані, які перевіряє сервер.
       window.onTelegramAuth = async (user) => {
         try { onLoggedIn(await api('/auth/telegram', 'POST', user)); } catch (err) { toastError(err); }
