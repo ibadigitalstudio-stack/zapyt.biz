@@ -1,6 +1,8 @@
 // Тексти інтерфейсу: українська та польська.
 const I18N = {
   uk: {
+    'login.unavailable': 'Вхід тимчасово недоступний: сайт ще налаштовується. Спробуйте трохи пізніше.',
+    'err.sms_unavailable': 'Надсилання SMS тимчасово недоступне. Спробуйте трохи пізніше.',
     'price.giveFree': 'Безкоштовно',
     'sub.auto.buy_car': 'Куплю авто',
     'sub.auto.sell_car': 'Продам авто',
@@ -298,6 +300,8 @@ const I18N = {
   },
 
   pl: {
+    'login.unavailable': 'Logowanie jest chwilowo niedostępne: serwis jest jeszcze konfigurowany. Spróbuj trochę później.',
+    'err.sms_unavailable': 'Wysyłanie SMS jest chwilowo niedostępne. Spróbuj trochę później.',
     'price.giveFree': 'Za darmo',
     'sub.auto.buy_car': 'Kupię auto',
     'sub.auto.sell_car': 'Sprzedam auto',

@@ -50,14 +50,20 @@ BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "").strip().lstrip("@")
 SITE_URL = os.environ.get("SITE_URL", "https://zapyt.biz").rstrip("/")
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "") == "1"
 ADMINS = {a.strip().lstrip("@").lower() for a in os.environ.get("ADMIN_USERNAMES", "").split(",") if a.strip()}
-# Без токена бота справжній вхід через Telegram неможливий — вмикається тестовий вхід.
-DEV_LOGIN = not (BOT_TOKEN and BOT_USERNAME)
+# На бойовому сервері (ZAPYT_ENV=production) тестовий вхід за ніком і показ SMS-коду на екрані вимкнені,
+# навіть якщо ключів ще немає. Увімкнути їх там можна лише явно: ALLOW_TEST_MODE=1 (тільки для перевірки).
+PRODUCTION = os.environ.get("ZAPYT_ENV", "") == "production"
+TEST_MODE_ALLOWED = not PRODUCTION or os.environ.get("ALLOW_TEST_MODE", "") == "1"
+TELEGRAM_READY = bool(BOT_TOKEN and BOT_USERNAME)
+# Без токена бота справжній вхід через Telegram неможливий — вмикається тестовий вхід (якщо дозволено).
+DEV_LOGIN = not TELEGRAM_READY and TEST_MODE_ALLOWED
 
 # SMS-підтвердження номера під час реєстрації (Twilio). Без ключів код показується на екрані — лише для перевірки.
 TWILIO_SID = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
 TWILIO_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
 TWILIO_FROM = os.environ.get("TWILIO_FROM", "").strip()
-SMS_DEV = not (TWILIO_SID and TWILIO_TOKEN and TWILIO_FROM)
+TWILIO_READY = bool(TWILIO_SID and TWILIO_TOKEN and TWILIO_FROM)
+SMS_DEV = not TWILIO_READY and TEST_MODE_ALLOWED
 SMS_CODE_TTL = 600
 SMS_RESEND_AFTER = 60
 SMS_PER_HOUR = 5
@@ -321,6 +327,8 @@ def send_sms(phone, text):
     if SMS_DEV:
         sys.stderr.write("[SMS, тестовий режим] %s: %s\n" % (phone, text))
         return
+    if not TWILIO_READY:
+        raise ApiError(503, "sms_unavailable")
     url = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json" % TWILIO_SID
     req = urllib.request.Request(url, urllib.parse.urlencode({"To": phone, "From": TWILIO_FROM, "Body": text}).encode())
     auth = base64.b64encode(("%s:%s" % (TWILIO_SID, TWILIO_TOKEN)).encode()).decode()
@@ -339,7 +347,7 @@ def code_hash(user_id, code):
 # ---------- API ----------
 
 def api_config(h):
-    return {"botUsername": BOT_USERNAME if not DEV_LOGIN else None, "devLogin": DEV_LOGIN,
+    return {"botUsername": BOT_USERNAME if TELEGRAM_READY else None, "devLogin": DEV_LOGIN,
             "categories": CATEGORIES, "maxPhotos": MAX_PHOTOS, "smsDev": SMS_DEV}
 
 
@@ -359,7 +367,7 @@ def start_session(h, user_id):
 
 
 def api_auth_telegram(h):
-    if DEV_LOGIN:
+    if not TELEGRAM_READY:
         raise ApiError(400, "invalid")
     tg_id, f = verify_telegram(h.body)
     username = str(f.get("username") or "")
@@ -923,7 +931,10 @@ if __name__ == "__main__":
     init_db()
     if "--seed" in sys.argv:
         seed()
-    mode = "ТЕСТОВИЙ вхід (без Telegram)" if DEV_LOGIN else "вхід через Telegram (@%s)" % BOT_USERNAME
-    print("zapyt.biz працює: http://localhost:%d — %s; SMS: %s" % (
-        PORT, mode, "ТЕСТОВИЙ режим (код на екрані)" if SMS_DEV else "Twilio"))
+    if TELEGRAM_READY:
+        mode = "вхід через Telegram (@%s)" % BOT_USERNAME
+    else:
+        mode = "ТЕСТОВИЙ вхід (без Telegram)" if DEV_LOGIN else "вхід ВИМКНЕНО: задайте TELEGRAM_BOT_TOKEN і TELEGRAM_BOT_USERNAME"
+    sms = "Twilio" if TWILIO_READY else ("ТЕСТОВИЙ режим (код на екрані)" if SMS_DEV else "ВИМКНЕНО: задайте ключі TWILIO_*")
+    print("zapyt.biz працює на порту %d — %s; SMS: %s" % (PORT, mode, sms), flush=True)
     ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()

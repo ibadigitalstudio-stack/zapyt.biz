@@ -33,10 +33,24 @@ SMS надсилаються через Twilio: зареєструйтесь н�
 `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`. Поки вони порожні, працює **тестовий режим**:
 код показується просто у вікні підтвердження, а SMS не надсилається.
 
-## Розміщення на сервері
+## Розміщення на Railway
+
+Проєкт готовий до Railway: `Dockerfile` збирає сайт, `railway.json` задає перевірку стану (`/api/config`).
+
+1. railway.com → вхід через GitHub → **New Project** → **Deploy from GitHub repo** → `zapyt.biz`.
+2. Додайте до сервісу **Volume** з шляхом підключення `/data` — там зберігаються база й фото.
+3. У **Variables** задайте `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `TWILIO_ACCOUNT_SID`,
+   `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`, `SITE_URL=https://zapyt.biz`, `ADMIN_USERNAMES`.
+4. **Settings → Networking**: спершу тимчасова адреса Railway для перевірки, потім власний домен.
+
+На Railway (`ZAPYT_ENV=production` у Dockerfile) тестовий вхід за ніком і показ SMS-коду на екрані вимкнені.
+Поки немає ключів Telegram/Twilio, вхід і SMS недоступні. Для короткої перевірки без ключів можна
+тимчасово додати змінну `ALLOW_TEST_MODE=1` — і обов'язково прибрати її перед відкриттям сайту людям.
+
+## Розміщення на власному сервері
 
 Запустіть `python3 server.py` як службу (systemd) і поставте перед ним nginx або Caddy з HTTPS,
-який проксіює `zapyt.biz` на `127.0.0.1:8000`. У `.env` має бути `COOKIE_SECURE=1`.
+який проксіює `zapyt.biz` на `127.0.0.1:8000`. У `.env` мають бути `COOKIE_SECURE=1` і `ZAPYT_ENV=production`.
 Дані лежать у теці `data/` (база `zapyt.db` і фото) — саме її треба резервувати.
 
 ## Структура
