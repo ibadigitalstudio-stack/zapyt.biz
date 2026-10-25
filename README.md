@@ -33,6 +33,16 @@ SMS надсилаються через Twilio: зареєструйтесь н�
 `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`. Поки вони порожні, працює **тестовий режим**:
 код показується просто у вікні підтвердження, а SMS не надсилається.
 
+## Розміщення на Render
+
+`render.yaml` описує все потрібне: збірку з `Dockerfile`, постійний диск `/data` для бази й фото,
+перевірку стану та регіон Франкфурт.
+
+1. render.com → вхід через GitHub → **New** → **Blueprint** → репозиторій `zapyt.biz`.
+2. Render прочитає `render.yaml` і попросить заповнити ключі (Telegram, Twilio, адміністратори).
+3. Після запуску сайт буде на тимчасовій адресі `*.onrender.com`; потім у **Settings → Custom Domains**
+   додається `zapyt.biz` і `www.zapyt.biz`.
+
 ## Розміщення на Railway
 
 Проєкт готовий до Railway: `Dockerfile` збирає сайт, `railway.json` задає перевірку стану (`/api/config`).

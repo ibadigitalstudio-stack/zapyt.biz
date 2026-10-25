@@ -1,0 +1,31 @@
+# Налаштування для Render (render.com → New → Blueprint → репозиторій zapyt.biz).
+# Постійний диск доступний лише на платних тарифах, тому план — starter.
+services:
+  - type: web
+    name: zapyt
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /api/config
+    autoDeploy: true
+    disk:
+      name: zapyt-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: SITE_URL
+        value: https://zapyt.biz
+      # Ключі вводяться в панелі Render (Environment), у репозиторії їх немає.
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_USERNAME
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_FROM
+        sync: false
+      - key: ADMIN_USERNAMES
+        sync: false
